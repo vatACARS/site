@@ -9,7 +9,7 @@ const SEO: React.FC<SEOProps> = ({ description = "Facilitate real-time text-base
 		<meta name="theme-color" content="#AC8DFB" />
 
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
+		<meta property="og:title" content={`vatACARS ${title ? `- ${title}` : ""}`} />
 		<meta property="og:description" content={description} />
 		<meta property="og:site_name" content={site_name} />
 		<meta property="og:url" content={site_url} />
