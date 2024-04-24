@@ -7,7 +7,7 @@ const SEO: React.FC<SEOProps> = ({ description = "Facilitate real-time text-base
 		<link rel="icon" href="/favicon.ico" />
 		<meta name="description" content={description} />
 		<meta name="keywords" content={keywords?.join(", ")} />
-		<meta name="theme-color" content="#AC8DFB" />
+		<meta name="theme-color" content="#3b82f6" />
 
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={`vatACARS ${title ? `- ${title}` : ""}`} />
