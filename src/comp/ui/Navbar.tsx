@@ -1,17 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Navbar() {
     return (
         <nav className="bg-slate-100">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="px-12 relative flex h-16 items-center justify-between border-b border-gray-200">
-                    <div className="flex items-center">
+                    <div className="relative w-32 flex items-center">
                         <div className="flex-shrink-0">
-                            <h3 className="font-semibold text-lg">
+                            <div className="font-semibold text-lg h-8 cursor-pointer">
                                 <Link href="/">
-                                    <p className="cursor-pointer"><span className="text-blue-500">vat</span>ACARS</p>
+                                    <Image src="/img/vatacars-logo.png" layout="fill" objectFit="contain" />
                                 </Link>
-                            </h3>
+                            </div>
                         </div>
                     </div>
                     <div>

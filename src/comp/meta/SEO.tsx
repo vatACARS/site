@@ -14,7 +14,7 @@ const SEO: React.FC<SEOProps> = ({ description = "Facilitate real-time text-base
 		<meta property="og:description" content={description} />
 		<meta property="og:site_name" content={site_name} />
 		<meta property="og:url" content={site_url} />
-		<meta property="og:image" content="/img/logo.png" />
+		<meta property="og:image" content="/img/vatacars-logo-sm.png" />
 
 		{/*<meta name="twitter:card" content="summary_large_image" />*/}
 		<meta name="twitter:title" content={title} />
