@@ -60,7 +60,7 @@ export default function StatusServices() {
 
     return (
         <>
-            <SEO />
+            <SEO title="Service Status" />
             <Navbar />
 
             <div className="mx-auto max-w-4xl px-12 py-6 flex flex-col space-y-12">
