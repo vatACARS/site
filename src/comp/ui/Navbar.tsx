@@ -19,7 +19,6 @@ export default function Navbar() {
                         <div className="flex space-x-8">
                             <Link href="https://github.com/vatACARS/plugin"><span className="hover:text-slate-700 px-3 py-2 rounded-md text-sm font-medium text-slate-900 cursor-pointer">Source Code</span></Link>
                             <Link href="/download"><span className="hover:text-slate-700 px-3 py-2 rounded-md text-sm font-medium text-slate-900 cursor-pointer">Download</span></Link>
-                            <Link href="/privacy"><span className="hover:text-slate-700 px-3 py-2 rounded-md text-sm font-medium text-slate-900 cursor-pointer">Privacy</span></Link>
                         </div>
                     </div>
                 </div>
