@@ -57,12 +57,15 @@ export default function Index() {
                             <span>Source Code</span>
                         </span>
                     </Link>
-                    <Link href="">
-                        <span className="cursor-not-allowed flex flex-row items-center space-x-2 rounded-full py-2 px-4 text-slate-800 ring-slate-800 outline-2 font-semibold bg-slate-200" data-aos="fade-left" data-aos-duration="2000">
+                    <a href="https://cdn.vatacars.com/dist/vatACARS Hub Setup 0.1.0.exe" target="_blank">
+                        <span className="cursor-pointer flex flex-row items-center space-x-2 rounded-full py-2 px-4 text-slate-800 ring-slate-800 outline-2 font-semibold bg-slate-200" data-aos="fade-left" data-aos-duration="2000">
                             <HiOutlineDownload />
-                            <span>vatACARS Hub</span>
+                            <p className="flex flex-row items-center space-x-1">
+                                <span>vatACARS Hub</span>
+                                <span className="text-xs text-slate-500">v0.1.0</span>
+                            </p>
                         </span>
-                    </Link>
+                    </a>
                 </div>
 
                 <div className="flex flex-row items-center pb-12 justify-center space-x-4">
