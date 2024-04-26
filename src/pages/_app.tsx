@@ -16,7 +16,7 @@ export default function ServicesStatusApp({ Component, pageProps: { ...pageProps
 
 	const acceptCookie = () => {
 		setShowConsent(true);
-		setCookie("localConsent", "true", {});
+		setCookie("localConsent", "true", { expires: new Date(new Date().setFullYear(new Date().getFullYear() + 1)) });
 	};
 
 	return (
