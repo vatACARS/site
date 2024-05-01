@@ -1,9 +1,16 @@
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
 import Navbar from "../comp/ui/Navbar";
 import Footer from "../comp/ui/Footer";
 
 import SEO from "../comp/meta/SEO";
 
 export default function Privacy() {
+    const router = useRouter();
+
+    useEffect(() => {router.push("/")}, []);
+
     return (
         <div>
             <SEO title="Download" />
