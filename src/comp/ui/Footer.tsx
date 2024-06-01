@@ -25,6 +25,9 @@ export default function Navbar() {
                     <Link href="/privacy">
                         <span className="hover:text-slate-500 px-3 py-2 rounded-md font-medium text-slate-900 cursor-pointer">Privacy Policy</span>
                     </Link>
+                    <Link href="/terms">
+                        <span className="hover:text-slate-500 px-3 py-2 rounded-md font-medium text-slate-900 cursor-pointer">Terms Of Use</span>
+                    </Link>
                 </div>
             </div>
         </nav>
