@@ -7,7 +7,7 @@ export default function Terms() {
         <div>
             <SEO title="Terms of Use" />
             <Navbar />
-            <div className="mx-auto max-w-4xl px-12 py-6 flex flex-col space-y-12">
+            <div className="mx-auto max-w-4xl px-12 py-6 mb-12 flex flex-col space-y-12">
                 <div key="title" className="text-center py-6">
                     <h1 className="font-bold text-6xl text-slate-700 mb-4">Terms of Use</h1>
                     <span className="text-lg text-slate-500">Last updated on 18<sup>th</sup> May, 2024.</span>
@@ -46,7 +46,7 @@ export default function Terms() {
 
                 <div key="support">
                     <h2 className="text-slate-800 text-xl font-semibold mb-2">Support</h2>
-                    <p className="text-slate-700">For support inquiries or dispute resolution, please contact us at support@vatACARS.com.</p>
+                    <p className="text-slate-700">For support inquiries or dispute resolution, please contact us at <a className="underline text-blue-500" href="mailto://contact@vatacars.com">contact@vatacars.com</a>.</p>
                 </div>
 
                 <div key="updates-maintenance">
@@ -76,7 +76,7 @@ export default function Terms() {
 
                 <div key="contact-us">
                     <h2 className="text-slate-800 text-xl font-semibold mb-2">Contact Us</h2>
-                    <p className="text-slate-700">If you have any questions about these Terms, please contact us at support@vatACARS.com.</p>
+                    <p className="text-slate-700">If you have any questions about these Terms, please contact us at <a className="underline text-blue-500" href="mailto://contact@vatacars.com">contact@vatacars.com</a>.</p>
                 </div>
             </div>
             <Footer />

@@ -8,7 +8,7 @@ export default function Privacy() {
         <div>
             <SEO title="Privacy Policy" />
             <Navbar />
-            <div className="mx-auto max-w-4xl px-12 py-6 flex flex-col space-y-12">
+            <div className="mx-auto max-w-4xl px-12 py-6 mb-12 flex flex-col space-y-12">
                 <div key="title" className="text-center py-6">
                     <h1 className="font-bold text-6xl text-slate-700 mb-4">Privacy Policy</h1>
                     <span className="text-lg text-slate-500">Last updated on 24<sup>th</sup> April, 2024.</span>
