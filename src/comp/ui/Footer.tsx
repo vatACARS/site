@@ -15,18 +15,18 @@ export default function Navbar() {
                     </div>
                 </div>
 
-                <div className="pr-12 text-right text-slate-700">
+                <div className="pr-12 text-right text-slate-700 flex flex-col space-y-2">
                     <Link href="https://status.vatacars.com/">
-                        <span className="hover:text-slate-500 px-3 py-2 rounded-md font-medium text-slate-900 cursor-pointer flex flex-row space-x-1 items-center">
+                        <span className="hover:text-slate-500 px-3 rounded-md font-medium text-slate-900 cursor-pointer flex flex-row space-x-1 items-center">
                             <span className="flex w-2.5 h-2.5 bg-green-500 rounded-full me-1.5 flex-shrink-0 animate-pulse" />
                             <p>Service Status</p>
                         </span>
                     </Link>
                     <Link href="/privacy">
-                        <span className="hover:text-slate-500 px-3 py-2 rounded-md font-medium text-slate-900 cursor-pointer">Privacy Policy</span>
+                        <span className="hover:text-slate-500 px-3 rounded-md font-medium text-slate-900 cursor-pointer">Privacy Policy</span>
                     </Link>
                     <Link href="/terms">
-                        <span className="hover:text-slate-500 px-3 py-2 rounded-md font-medium text-slate-900 cursor-pointer">Terms Of Use</span>
+                        <span className="hover:text-slate-500 px-3 rounded-md font-medium text-slate-900 cursor-pointer">Terms of Use</span>
                     </Link>
                 </div>
             </div>
