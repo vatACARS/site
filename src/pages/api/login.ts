@@ -11,10 +11,15 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
     const { token_type, access_token, refresh_token } = req.query;
     if(!token_type || !access_token || !refresh_token) return res.redirect("/api/oauth");
 
-    const { cid, name_first, name_last, email, rating, division, region, subdivision } = await fetch("https://auth.vatsim.net/api/user", {
-        headers: { Authorization: `${token_type[0]} ${access_token[0]}` },
+    const vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
+        headers: {
+            Authorization: `${token_type} ${access_token}`,
+            Accept: "application/json"
+        },
     }).then((res) => res.json());
 
+    const { cid, name_first, name_last, email, rating, division, region, subdivision } = vatsimUserInfo.data;
+    
     let user = await prisma.vatACARSUser.findUnique({
         where: { cid }
     });
@@ -23,8 +28,8 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
         user = await prisma.vatACARSUser.create({
             data: {
                 cid: cid,
-                access_token: access_token[0],
-                refresh_token: refresh_token[0]
+                access_token: access_token.toString(),
+                refresh_token: refresh_token.toString()
             }
         });
     }
