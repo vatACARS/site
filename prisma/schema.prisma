@@ -1,0 +1,15 @@
+generator client {
+	provider = "prisma-client-js"
+}
+
+datasource db {
+	provider = "mongodb"
+	url = env("database_url")
+}
+
+model VatACARSUser {
+    id              String      @id @default(auto()) @map("_id") @db.ObjectId
+    cid             String      @unique
+    access_token    String      @unique
+    refresh_token   String
+}
