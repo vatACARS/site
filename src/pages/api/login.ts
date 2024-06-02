@@ -18,7 +18,9 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
         },
     }).then((res) => res.json());
 
-    const { cid, name_first, name_last, email, rating, division, region, subdivision } = vatsimUserInfo.data;
+    const { cid, personal, vatsim } = vatsimUserInfo.data;
+    const { name_first, name_last, email } = personal;
+    const { rating, division, region, subdivision } = vatsim;
     
     let user = await prisma.vatACARSUser.findUnique({
         where: { cid }
