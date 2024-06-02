@@ -7,12 +7,12 @@ import { SessionData, sessionOptions } from "../../lib/session";
 const prisma = new PrismaClient();
 
 export default async function loginRoute(req: NextApiRequest, res: NextApiResponse) {
-    if(req.method != "POST") return res.redirect("/");
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
-    const { token_type, access_token, refresh_token } = await req.body;
+    const { token_type, access_token, refresh_token } = req.query;
+    if(!token_type || !access_token || !refresh_token) return res.redirect("/api/oauth");
 
     const { cid, name_first, name_last, email, rating, division, region, subdivision } = await fetch("https://auth.vatsim.net/api/user", {
-        headers: { Authorization: `${token_type} ${access_token}` },
+        headers: { Authorization: `${token_type[0]} ${access_token[0]}` },
     }).then((res) => res.json());
 
     let user = await prisma.vatACARSUser.findUnique({
@@ -23,8 +23,8 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
         user = await prisma.vatACARSUser.create({
             data: {
                 cid: cid,
-                access_token,
-                refresh_token
+                access_token: access_token[0],
+                refresh_token: refresh_token[0]
             }
         });
     }

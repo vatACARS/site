@@ -42,19 +42,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return res.redirect(OAUTH_URI);
     }
 
-    const user: VatACARSUserData = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            token_type,
-            access_token,
-            refresh_token
-        })
-    }).then(resp => resp.json());
-
-    if(!user.data.authorised) return res.redirect(OAUTH_URI);
-
-    res.redirect("/me");
+    res.redirect(`/api/login?token_type=${token_type}&access_token=${access_token}&refresh_token=${refresh_token}`);
 }
