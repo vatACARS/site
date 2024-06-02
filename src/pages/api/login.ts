@@ -1,6 +1,6 @@
 import type { VatACARSUserData } from "../../lib/types";
 import { getIronSession } from "iron-session";
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import { SessionData, sessionOptions } from "../../lib/session";
 
