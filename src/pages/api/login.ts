@@ -44,5 +44,5 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
     session.user = vatACARSUserData;
     await session.save();
 
-    return res.json(vatACARSUserData);
+    return res.redirect("/me");
 }

@@ -21,13 +21,13 @@ export default function Me() {
                 <div key="userData">
                     <div className="flex flex-col text-slate-700">
                         <p>CID: {user.data.cid}</p>
-                        <p>First Name: {user.data.name_first}</p>
+                        {/*<p>First Name: {user.data.name_first}</p>
                         <p>Last Name: {user.data.name_last}</p>
                         <p>Email: {user.data.email}</p>
                         <p className="mt-2">Controller Rating: {user.data.rating.long} ({user.data.rating.short})</p>
                         <p className="mt-2">Region: {user.data.region.name} ({user.data.region.id})</p>
                         <p>Division: {user.data.division.name} ({user.data.division.id})</p>
-                        <p>Subdivision: {user.data.subdivision.name} ({user.data.subdivision.id})</p>
+                        <p>Subdivision: {user.data.subdivision.name} ({user.data.subdivision.id})</p>*/}
                     </div>
                 </div>
             </div>
