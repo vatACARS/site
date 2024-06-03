@@ -11,39 +11,6 @@ import { VatACARSUserData } from "../lib/types";
 export default function Me() {
     const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    /*const user: VatACARSUserData = {
-        data: {
-            authorised: true,
-            cid: "100000",
-            name_first: "Test",
-            name_last: "User",
-            email: "testuser@vatsim.net",
-            rating: {
-                id: 0,
-                long: "RATING_LONG",
-                short: "RATING_SHORT"
-            },
-            region: {
-                name: "REGION_NAME",
-                id: "REGION_ID"
-            },
-            division: {
-                name: "DIVISION_NAME",
-                id: "DIVISION_ID"
-            },
-            subdivision: {
-                name: "SUBDIVISION_NAME",
-                id: "SUBDIVISION_ID"
-            },
-            discord: {
-                id: "684000000000000000",
-                username: "TestUser",
-                discriminator: "1234",
-                avatar: ""
-            }
-        }
-    }*/
-
     if (!user) return;
     if (!user.data.authorised) return <p>Redirecting you...</p>
 
