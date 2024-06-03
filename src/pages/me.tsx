@@ -5,15 +5,18 @@ import useUser from "../lib/useUser";
 import SEO from "../comp/meta/SEO";
 import Navbar from "../comp/ui/Navbar";
 import Footer from "../comp/ui/Footer";
+import Modal from '../comp/ui/Modal';
 
 import { BsDiscord } from "react-icons/bs";
 
 export default function Me() {
+    const [showModal, setShowModal] = useState(false);
     const [waiting, setWaiting] = useState(false);
     const [message, setMessage] = useState("");
+    const [selectedNickname, setSelectedNickname] = useState("1");
     const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    /*const user: VatACARSUserData = {
+    /*const user = {
         data: {
             authorised: true,
             cid: "100000",
@@ -46,16 +49,21 @@ export default function Me() {
         }
     }*/
 
+    const handleRadioChange = (event) => {
+        setSelectedNickname(event.target.value);
+    };
+
     async function joinDiscord() {
-        if(!user.data.authorised) return;
+        if (!user.data.authorised) return;
         setWaiting(true);
         setMessage("");
 
         const res = await fetch("/api/joinDiscord", {
-            method: "POST"
+            method: "POST",
+            body: new URLSearchParams({ nickname: selectedNickname }).toString()
         }).then(resp => resp.json());
 
-        if(res.success) return setMessage(res.message);
+        if (res.success) return setMessage(res.message);
         setWaiting(false);
         setMessage(res.message);
     }
@@ -99,13 +107,58 @@ export default function Me() {
                                     </div>
                                 </div>
                                 <div className="flex flex-col">
-                                    <p onClick={() => !waiting && joinDiscord()}>
-                                        <span className={`px-4 py-2 text-white font-semibold flex items-center space-x-2 rounded-md transition-all duration-200 ${waiting ? "bg-slate-900" : "bg-[#5865F2] cursor-pointer"}`}>
+                                    <p onClick={() => !showModal && setShowModal(true)}>
+                                        <span className={`px-4 py-2 text-white font-semibold flex items-center space-x-2 rounded-md transition-all duration-200 ${showModal ? "bg-slate-900" : "bg-[#5865F2] cursor-pointer"}`}>
                                             <BsDiscord />
-                                            <span>{waiting ? "Please wait..." : "Join the Discord"}</span>
+                                            <span>{showModal ? "Waiting..." : "Join the Discord"}</span>
                                         </span>
                                     </p>
-                                    <span>{message}</span>
+                                    <Modal title="Join the Discord" isOpen={showModal} onClose={() => setShowModal(false)}>
+                                        <span className="text-sm">Nickname Preference:</span>
+                                        <div className="mt-2 flex flex-col space-y-2">
+                                            <label className="cursor-pointer">
+                                                <input type="radio" value="1" checked={selectedNickname=="1"} onChange={handleRadioChange} className="peer sr-only" name="nickname" />
+                                                <div className="text-sm w-48 rounded-md px-2 py-1 bg-slate-200 text-slate-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-blue-600 peer-checked:ring-blue-500 peer-checked:ring-offset-2">
+                                                    <p>{user.data.name_first} - {user.data.cid}</p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div className="mt-2 flex flex-col space-y-2">
+                                            <label className="cursor-pointer">
+                                                <input type="radio" value="2" checked={selectedNickname=="2"} onChange={handleRadioChange} className="peer sr-only" name="nickname" />
+                                                <div className="text-sm w-48 rounded-md px-2 py-1 bg-slate-200 text-slate-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-blue-600 peer-checked:ring-blue-500 peer-checked:ring-offset-2">
+                                                    <p>{user.data.name_first} {user.data.name_last.substring(0, 1)} - {user.data.cid}</p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div className="mt-2 flex flex-col space-y-2">
+                                            <label className="cursor-pointer">
+                                                <input type="radio" value="3" checked={selectedNickname=="3"} onChange={handleRadioChange} className="peer sr-only" name="nickname" />
+                                                <div className="text-sm w-48 rounded-md px-2 py-1 bg-slate-200 text-slate-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-blue-600 peer-checked:ring-blue-500 peer-checked:ring-offset-2">
+                                                    <p>{user.data.name_first} {user.data.name_last} - {user.data.cid}</p>
+                                                </div>
+                                            </label>
+                                        </div>
+                                        <div className="mt-2 flex flex-col space-y-2">
+                                            <label className="cursor-pointer">
+                                                <input type="radio" value="4" checked={selectedNickname=="4"} onChange={handleRadioChange} className="peer sr-only" name="nickname" />
+                                                <div className="text-sm w-48 rounded-md px-2 py-1 bg-slate-200 text-slate-600 ring-2 ring-transparent transition-all hover:shadow peer-checked:text-blue-600 peer-checked:ring-blue-500 peer-checked:ring-offset-2">
+                                                    <p>| {user.data.cid} |</p>
+                                                </div>
+                                            </label>
+                                        </div>
+
+                                        <span className="text-slate-400 text-sm flex mt-4">To change your nickname preferences, leave the Discord server first.</span>
+                                        <p onClick={() => !waiting && joinDiscord()}>
+                                            <div className="flex flex-row items-center space-x-2 mt-2">
+                                                <span className={`w-32 justify-center px-2 py-1 text-white flex items-center space-x-2 rounded-md transition-all duration-200 ${waiting ? "bg-slate-900" : "bg-[#5865F2] cursor-pointer"}`}>
+                                                    <BsDiscord />
+                                                    <span>{waiting ? "Please wait..." : "Finish"}</span>
+                                                </span>
+                                                <span>{message}</span>
+                                            </div>
+                                        </p>
+                                    </Modal>
                                 </div>
                             </div>
                         </div>
