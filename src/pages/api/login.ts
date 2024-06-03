@@ -23,16 +23,24 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
     const { rating, division, region, subdivision } = vatsim;
     
     let user = await prisma.vatACARSUser.findUnique({
-        where: { cid }
+        where: { cid },
+        include: { discord_user: true }
     });
 
+    let discord = null;
+
     if(!user) {
-        user = await prisma.vatACARSUser.create({
+        await prisma.vatACARSUser.create({
             data: {
                 cid: cid,
                 access_token: access_token.toString(),
                 refresh_token: refresh_token.toString()
             }
+        });
+
+        user = await prisma.vatACARSUser.findUnique({
+            where: { cid },
+            include: { discord_user: true }
         });
     } else {
         if(user.access_token != access_token) {
@@ -42,14 +50,17 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
                     access_token: access_token.toString(),
                     refresh_token: refresh_token.toString()
                 }
-            })
+            });
         }
+        
+        if(user.discord_user) discord = user.discord_user;
     }
 
     const vatACARSUserData: VatACARSUserData = {
         data: {
             authorised: true,
-            cid, name_first, name_last, email, rating, division, region, subdivision
+            cid, name_first, name_last, email, rating, division, region, subdivision,
+            discord
         }
     }
 

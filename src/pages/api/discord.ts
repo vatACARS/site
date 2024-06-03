@@ -1,9 +1,11 @@
-//https://discord.com/oauth2/authorize?client_id=737324942256767077&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A8001%2Fapi%2Fdiscord&scope=guilds.join+identify
 import { NextApiRequest, NextApiResponse } from "next";
 import { getIronSession } from "iron-session";
 import { SessionData, sessionOptions } from "../../lib/session";
+import { PrismaClient } from "@prisma/client";
 
 const scope = ["identify", "guilds.join"].join(" ");
+
+const prisma = new PrismaClient();
 
 const OAUTH_QS = new URLSearchParams({
     client_id: process.env.discord_client_id,
@@ -16,7 +18,7 @@ const OAUTH_URI = `https://discord.com/oauth2/authorize?${OAUTH_QS}`;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
-    if(!session.user) return res.redirect("/api/oauth");
+    if (!session.user) return res.redirect("/api/oauth");
 
     if (req.method !== "GET") return res.redirect("/");
 
@@ -53,8 +55,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         headers: { Authorization: `${token_type} ${access_token}` },
     }).then((res) => res.json());
 
-    console.log(user);
-
     if (!("id" in user)) {
         return res.redirect(OAUTH_URI);
     }
@@ -64,14 +64,55 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         nick: `${session.user.data.name_first} - ${session.user.data.cid}`
     });
 
-    const join = await fetch(`https://discord.com/api/guilds/${"1233928217530990725"}/members/${user.id}`, {
+    /*const join = await fetch(`https://discord.com/api/guilds/${"1233928217530990725"}/members/${user.id}`, {
         headers: {
             Authorization: `Bot ${process.env.discord_bot_token}`,
             "Content-Type": "application/json"
         },
         method: "PUT",
         body
-    }).then(resp => resp.json());
+    }).then(resp => resp.json());*/
+
+    session.user.data.discord = {
+        id: user.id,
+        username: user.username,
+        discriminator: user.discriminator,
+        avatar: user.avatar
+    }
+
+    let VatACARSUser = await prisma.vatACARSUser.findUnique({
+        where: { cid: session.user.data.cid },
+        include: { discord_user: true }
+    });
+
+    if (VatACARSUser.discord_user) {
+        await prisma.vatACARSUser.update({
+            where: { cid: session.user.data.cid },
+            data: {
+                discord_user: {
+                    update: {
+                        access_token: access_token.toString(),
+                        refresh_token: refresh_token.toString(),
+                    },
+                },
+            },
+        });
+    } else {
+        await prisma.vatACARSUser.update({
+            where: { cid: session.user.data.cid },
+            data: {
+                discord_user: {
+                    create: {
+                        discord_id: user.id,
+                        access_token: access_token.toString(),
+                        refresh_token: refresh_token.toString(),
+                    },
+                },
+            },
+        });
+    }
+
+    await session.save();
 
     res.redirect("/me");
 }

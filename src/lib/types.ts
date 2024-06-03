@@ -37,6 +37,13 @@ export interface VatsimUserData {
     }
 }
 
+interface DiscordLink {
+    id: string;
+    username: string;
+    discriminator: string;
+    avatar: string;
+}
+
 export interface VatACARSUserData {
     data: {
         authorised: true;
@@ -60,7 +67,8 @@ export interface VatACARSUserData {
         subdivision: {
             id: string;
             name: string;
-        }
+        },
+        discord: DiscordLink | null
     }
 }
 

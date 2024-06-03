@@ -1,16 +1,26 @@
 generator client {
-	provider = "prisma-client-js"
-    engineType = "binary"
+  provider   = "prisma-client-js"
+  engineType = "binary"
 }
 
 datasource db {
-	provider = "mongodb"
-	url = env("database_url")
+  provider = "mongodb"
+  url      = env("database_url")
 }
 
 model VatACARSUser {
-    id              String      @id @default(auto()) @map("_id") @db.ObjectId
-    cid             String      @unique
-    access_token    String      @unique
-    refresh_token   String
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  cid           String          @unique
+  access_token  String          @unique
+  refresh_token String
+  discord_user  DiscordUser?
+}
+
+model DiscordUser {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  discord_id    String          @unique
+  access_token  String          @unique
+  refresh_token String
+  acars_user_id String          @unique @db.ObjectId
+  VatACARSUser  VatACARSUser    @relation(fields: [acars_user_id], references: [id])
 }
