@@ -151,7 +151,7 @@ export default function Me() {
                                         <span className="text-slate-400 text-sm flex mt-4">To change your nickname preferences, leave the Discord server first.</span>
                                         <p onClick={() => !waiting && joinDiscord()}>
                                             <div className="flex flex-row items-center space-x-2 mt-2">
-                                                <span className={`w-32 justify-center px-2 py-1 text-white flex items-center space-x-2 rounded-md transition-all duration-200 ${waiting ? "bg-slate-200 text-slate-600" : "bg-[#5865F2] cursor-pointer"}`}>
+                                                <span className={`w-32 justify-center px-2 py-1 flex items-center space-x-2 rounded-md transition-all duration-200 ${waiting ? "bg-slate-200 text-slate-600" : "bg-[#5865F2] cursor-pointer text-white"}`}>
                                                     <BsDiscord />
                                                     <span>{waiting ? "..." : "Finish"}</span>
                                                 </span>
