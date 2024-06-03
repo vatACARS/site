@@ -34,6 +34,16 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
                 refresh_token: refresh_token.toString()
             }
         });
+    } else {
+        if(user.access_token != access_token) {
+            await prisma.vatACARSUser.update({
+                where: { cid },
+                data: {
+                    access_token: access_token.toString(),
+                    refresh_token: refresh_token.toString()
+                }
+            })
+        }
     }
 
     const vatACARSUserData: VatACARSUserData = {

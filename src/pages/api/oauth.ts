@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { VatACARSUserData } from "../../lib/types";
 
 const scope = ["full_name", "vatsim_details", "email"].join(" ");
 
