@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Link from "next/link";
 import useUser from "../lib/useUser";
 
@@ -6,9 +7,10 @@ import Navbar from "../comp/ui/Navbar";
 import Footer from "../comp/ui/Footer";
 
 import { BsDiscord } from "react-icons/bs";
-import { VatACARSUserData } from "../lib/types";
 
 export default function Me() {
+    const [waiting, setWaiting] = useState(false);
+    const [message, setMessage] = useState("");
     const { user } = useUser({ redirectTo: "/api/oauth" });
 
     /*const user: VatACARSUserData = {
@@ -43,6 +45,20 @@ export default function Me() {
             }
         }
     }*/
+
+    async function joinDiscord() {
+        if(!user.data.authorised) return;
+        setWaiting(true);
+        setMessage("");
+
+        const res = await fetch("/api/joinDiscord", {
+            method: "POST"
+        }).then(resp => resp.json());
+
+        if(res.success) return setMessage(res.message);
+        setWaiting(false);
+        setMessage(res.message);
+    }
 
     if (!user) return <p>Please wait...</p>;
     if (!user.data.authorised) return <p>Redirecting you...</p>
@@ -82,12 +98,15 @@ export default function Me() {
                                         <span className="text-slate-400">{user.data.discord.id}</span>
                                     </div>
                                 </div>
-                                <Link href="/api/discord">
-                                    <button className="px-4 py-2 bg-[#5865F2] text-white font-semibold flex items-center space-x-2 rounded-md">
-                                        <BsDiscord />
-                                        <span>Join the Discord</span>
-                                    </button>
-                                </Link>
+                                <div className="flex flex-col">
+                                    <p onClick={() => !waiting && joinDiscord()}>
+                                        <span className={`px-4 py-2 text-white font-semibold flex items-center space-x-2 rounded-md transition-all duration-200 ${waiting ? "bg-slate-900" : "bg-[#5865F2] cursor-pointer"}`}>
+                                            <BsDiscord />
+                                            <span>{waiting ? "Please wait..." : "Join the Discord"}</span>
+                                        </span>
+                                    </p>
+                                    <span>{message}</span>
+                                </div>
                             </div>
                         </div>
                     ) : (
