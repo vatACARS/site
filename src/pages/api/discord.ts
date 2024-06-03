@@ -73,5 +73,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         body
     }).then(resp => resp.json());
 
-    res.json(join);
+    res.redirect("/me");
 }
