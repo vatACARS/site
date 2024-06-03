@@ -30,6 +30,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         body
     });
 
-    if(resp.status == 204) return res.status(204).json({ success: true, message: "You're already in the server." });
-    res.status(200).json({ success: true, message: "You've been added!" });
+    if(resp.status == 204) return res.json({ success: true, message: "You're already in the server." });
+    res.json({ success: true, message: "You've been added!" });
 }
