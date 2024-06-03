@@ -92,7 +92,7 @@ export default function Me() {
                             <p className="text-lg text-blue-500">Linked Discord Account</p>
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center space-x-3">
-                                    <div className="w-14 h-14 rounded-full shadow-xl justify-center text-2xl flex items-center"><img src={`https://cdn.discordapp.com/avatars/${user.data.discord.id}/${user.data.discord.avatar}.webp?size=256`} /></div>
+                                    <img className="w-14 h-14 rounded-full shadow-xl" src={`https://cdn.discordapp.com/avatars/${user.data.discord.id}/${user.data.discord.avatar}.webp?size=256`} />
                                     <div className="text-lg flex flex-col -space-y-2">
                                         <span className="font-semibold">{user.data.discord.username}{user.data.discord.discriminator != "0" ? `#${user.data.discord.discriminator}` : ""}</span>
                                         <span className="text-slate-400">{user.data.discord.id}</span>
