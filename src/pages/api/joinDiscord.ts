@@ -29,6 +29,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         method: "PUT",
         body
     });
+    
+    console.log(await resp.json());
 
     if(resp.status == 204) return res.status(204).json({ success: true, message: "You're already in the server." });
     res.status(200).json({ success: true, message: "You've been added!" });
