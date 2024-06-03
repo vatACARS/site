@@ -16,7 +16,7 @@ const OAUTH_URI = `https://discord.com/oauth2/authorize?${OAUTH_QS}`;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
-    if(!session.user.data.authorised) return res.redirect("/api/oauth");
+    if(!session.user) return res.redirect("/api/oauth");
 
     if (req.method !== "GET") return res.redirect("/");
 
