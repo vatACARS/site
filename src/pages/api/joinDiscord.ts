@@ -17,7 +17,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if(!VatACARSUser.discord_user) return res.status(401).json({ success: false, message: "Discord account not linked" });
 
     const body = JSON.stringify({
-        access_token: VatACARSUser.access_token.toString(),
+        access_token: VatACARSUser.discord_user.access_token.toString(),
         nick: `${session.user.data.name_first} - ${session.user.data.cid}`
     });
 
@@ -29,8 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         method: "PUT",
         body
     });
-
-    console.log(resp.json());
 
     if(resp.status == 204) return res.status(204).json({ success: true, message: "You're already in the server." });
     res.status(200).json({ success: true, message: "You've been added!" });
