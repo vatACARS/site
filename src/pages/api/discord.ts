@@ -16,7 +16,8 @@ const OAUTH_URI = `https://discord.com/oauth2/authorize?${OAUTH_QS}`;
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
-    return res.json(session);
+    if(!session.user.data.authorised) return res.redirect("/api/oauth");
+
     if (req.method !== "GET") return res.redirect("/");
 
     const { code = null, error = null } = req.query;
@@ -59,7 +60,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     body = JSON.stringify({
-        access_token: access_token.toString()
+        access_token: access_token.toString(),
+        nick: `${session.user.data.name_first} - ${session.user.data.cid}`
     });
 
     const join = await fetch(`https://discord.com/api/guilds/${"1233928217530990725"}/members/${user.id}`, {
