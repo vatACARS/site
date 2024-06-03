@@ -9,9 +9,9 @@ import { BsDiscord } from "react-icons/bs";
 import { VatACARSUserData } from "../lib/types";
 
 export default function Me() {
-    //const { user } = useUser({ redirectTo: "/api/oauth" });
+    const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    const user: VatACARSUserData = {
+    /*const user: VatACARSUserData = {
         data: {
             authorised: true,
             cid: "100000",
@@ -35,14 +35,14 @@ export default function Me() {
                 name: "SUBDIVISION_NAME",
                 id: "SUBDIVISION_ID"
             },
-            discord: null/*{
+            discord: {
                 id: "684000000000000000",
                 username: "TestUser",
                 discriminator: "1234",
                 avatar: ""
-            }*/
+            }
         }
-    }
+    }*/
 
     if (!user) return;
     if (!user.data.authorised) return <p>Redirecting you...</p>
