@@ -21,7 +21,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         nick: `${session.user.data.name_first} - ${session.user.data.cid}`
     });
 
-    const resp = await fetch(`https://discord.com/api/guilds/${"1233928217530990725"}/members/${VatACARSUser.discord_user.id}`, {
+    const resp = await fetch(`https://discord.com/api/guilds/${"1233928217530990725"}/members/${VatACARSUser.discord_user.discord_id}`, {
         headers: {
             Authorization: `Bot ${process.env.discord_bot_token}`,
             "Content-Type": "application/json"
@@ -29,8 +29,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         method: "PUT",
         body
     });
-    
-    console.log(await resp.json());
 
     if(resp.status == 204) return res.status(204).json({ success: true, message: "You're already in the server." });
     res.status(200).json({ success: true, message: "You've been added!" });
