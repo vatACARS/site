@@ -7,9 +7,9 @@ import Footer from "../comp/ui/Footer";
 import { BsDiscord } from "react-icons/bs";
 
 export default function Me() {
-    //const { user } = useUser({ redirectTo: "/api/oauth" });
+    const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    const user = {
+    /*const user = {
         data: {
             authorised: true,
             cid: 100000,
@@ -33,7 +33,7 @@ export default function Me() {
                 id: "SUBDIVISION_ID"
             }
         }
-    }
+    }*/
 
     if (!user) return <p>Authorising you...</p>;
     if (!user.data.authorised) return <p>Redirecting you...</p>
