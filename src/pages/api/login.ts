@@ -53,7 +53,19 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
             });
         }
         
-        if(user.discord_user) discord = user.discord_user;
+        if(user.discord_user) {
+            const discordUser = await fetch("https://discord.com/api/users/@me", {
+                headers: { Authorization: `Bearer ${user.discord_user.access_token}` },
+            }).then((res) => res.json());
+            if ("id" in user) {
+                discord = {
+                    id: discordUser.id,
+                    username: discordUser.username,
+                    discriminator: discordUser.discriminator,
+                    avatar: discordUser.avatar
+                }
+            }
+        }
     }
 
     const vatACARSUserData: VatACARSUserData = {
