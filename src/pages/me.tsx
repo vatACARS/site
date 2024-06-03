@@ -1,3 +1,4 @@
+import Link from "next/link";
 import useUser from "../lib/useUser";
 
 import SEO from "../comp/meta/SEO";
@@ -66,10 +67,12 @@ export default function Me() {
                         <p>Subdivision: {user.data.subdivision.id != null ? `${user.data.subdivision.name} (${user.data.subdivision.id})` : "None"}</p>
                     </div>*/}
                 </div>
-                <button className="px-4 py-2 bg-[#5865F2] text-white font-semibold flex items-center space-x-2 rounded-md">
-                    <BsDiscord />
-                    <span>Join the Discord</span>
-                </button>
+                <Link href="/api/discord">
+                    <button className="px-4 py-2 bg-[#5865F2] text-white font-semibold flex items-center space-x-2 rounded-md">
+                        <BsDiscord />
+                        <span>Join the Discord</span>
+                    </button>
+                </Link>
             </div>
             <Footer />
         </>
