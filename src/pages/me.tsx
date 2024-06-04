@@ -63,7 +63,7 @@ export default function Me() {
                 "Content-Type": "application/json"
             },
             method: "POST",
-            body: new URLSearchParams({ nickname: selectedNickname }).toString()
+            body: { nickname: selectedNickname } as any
         }).then(resp => resp.json());
 
         if (res.success) return setMessage(res.message);
