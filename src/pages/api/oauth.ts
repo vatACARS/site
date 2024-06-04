@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-const scope = ["full_name", "vatsim_details", "email"].join(" ");
+const scope = ["full_name", "vatsim_details"].join(" ");
 
 const OAUTH_QS = new URLSearchParams({
     client_id: process.env.vatsim_client_id,
