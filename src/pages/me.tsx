@@ -63,7 +63,7 @@ export default function Me() {
                 "Content-Type": "application/json"
             },
             method: "POST",
-            body: { nickname: selectedNickname } as any
+            body: JSON.stringify({ nickname: selectedNickname })
         }).then(resp => resp.json());
 
         if (res.success) return setMessage(res.message);
