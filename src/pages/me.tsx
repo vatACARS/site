@@ -59,6 +59,9 @@ export default function Me() {
         setMessage("");
 
         const res = await fetch("/api/joinDiscord", {
+            headers: {
+                "Content-Type": "application/json"
+            },
             method: "POST",
             body: new URLSearchParams({ nickname: selectedNickname }).toString()
         }).then(resp => resp.json());
