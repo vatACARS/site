@@ -26,9 +26,9 @@ export default function Navbar() {
                                 <Link href="/me">
                                     <span className="hover:text-slate-700 px-3 py-2 rounded-md text-sm font-medium text-slate-900 cursor-pointer">{user.data.name_first}</span>
                                 </Link>
-                                {/*<Link href="/api/oauth">
+                                <Link href="/api/logout">
                                     <span className="hover:text-slate-700 px-3 py-2 rounded-md text-sm font-medium text-slate-900 cursor-pointer">Sign out</span>
-                                </Link>*/}
+                                </Link>
                             </>)}
                             {user && !user?.data.authorised && (
                                 <Link href="/api/oauth">
