@@ -14,6 +14,8 @@ agenda.define("invalidate auth token", async job => {
     if(dbToken) await prisma.authToken.delete({
         where: { token }
     });
+
+    await job.remove();
 });
 
 agenda.start();
