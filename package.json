@@ -15,6 +15,7 @@
     "@babel/core": "^7.17.5",
     "@prisma/client": "^5.15.0",
     "@tailwindcss/typography": "^0.5.2",
+    "agenda": "^5.0.0",
     "aos": "^3.0.0-beta.6",
     "cookies-next": "^4.1.1",
     "geojson": "^0.5.0",
