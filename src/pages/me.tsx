@@ -122,14 +122,6 @@ export default function Me() {
         }).then(resp => resp.json());
 
         if(res.success) setApiKeys(res.apiKeys);
-
-        setApiKeys([{
-            "id": "6667c02ee816b680cf1067c9",
-            "token": "vAcV1-ff78ece1ad3cf5100499d1b40d",
-            "created": "2024-06-11T03:10:38.241Z",
-            "expires": "2024-07-11T03:10:38.241Z",
-            "acars_user_id": "665c844f256f8274f6ed4a69"
-        }]);
     }
 
     async function generateKey() {
