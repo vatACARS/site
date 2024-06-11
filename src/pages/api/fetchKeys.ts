@@ -11,5 +11,10 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
 	const session = await getIronSession<SessionData>(req, res, sessionOptions);
     if (!session.user) return res.status(401).json({ success: false, message: "Not logged in" });
 
-    return res.json({ success: true, apiKeys: session.user.data.authToken || [] });
+    let VatACARSUser = await prisma.vatACARSUser.findUnique({
+        where: { cid: session.user.data.cid },
+        include: { auth_token: true }
+    });
+
+    return res.json({ success: true, apiKeys: VatACARSUser.auth_token || [] });
 }
