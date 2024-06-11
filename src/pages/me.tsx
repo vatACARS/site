@@ -44,9 +44,9 @@ export default function Me() {
     const [selectedNickname, setSelectedNickname] = useState("1");
 
     const [tab, setTab] = useState("account");
-    //const { user } = useUser({ redirectTo: "/api/oauth" });
+    const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    const user = {
+    /*const user = {
         data: {
             authorised: true,
             cid: "100000",
@@ -75,13 +75,13 @@ export default function Me() {
                 discriminator: "1234",
                 avatar: ""
             },
-            authToken: []/*[{
+            authToken: [{
                 auth_token: "123abc",
                 created: new Date(),
                 expires: new Date().setMonth(new Date().getMonth() + 1)
-            }]*/
+            }]
         }
-    }
+    }*/
 
     const handleRadioChange = (event) => {
         setSelectedNickname(event.target.value);
