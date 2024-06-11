@@ -44,6 +44,12 @@ interface DiscordLink {
     avatar: string;
 }
 
+export interface AuthTokenLink {
+    token: string;
+    created: Date;
+    expires: Date;
+}
+
 export interface VatACARSUserData {
     data: {
         authorised: true;
@@ -68,7 +74,8 @@ export interface VatACARSUserData {
             id: string;
             name: string;
         },
-        discord: DiscordLink | null
+        discord: DiscordLink | null,
+        authToken: AuthTokenLink[] | []
     }
 }
 
