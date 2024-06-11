@@ -45,9 +45,9 @@ export default function Me() {
     const [selectedNickname, setSelectedNickname] = useState("1");
 
     const [tab, setTab] = useState("account");
-    //const { user } = useUser({ redirectTo: "/api/oauth" });
+    const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    const user = {
+    /*const user = {
         data: {
             authorised: true,
             cid: "100000",
@@ -82,7 +82,7 @@ export default function Me() {
                 expires: new Date().setMonth(new Date().getMonth() + 1)
             }]
         }
-    }
+    }*/
 
     const handleRadioChange = (event) => {
         setSelectedNickname(event.target.value);
@@ -170,7 +170,7 @@ export default function Me() {
 
     useEffect(() => {
         fetchApiKeys();
-    }, [ /* user */ ]);
+    }, [ ]);
 
     if (!user) return <p>Please wait...</p>;
     if (!user.data.authorised) return <p>Redirecting you...</p>
