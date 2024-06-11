@@ -108,7 +108,7 @@ export default function Me() {
     async function fetchApiKeys() {
         if (!user.data.authorised) return;
 
-        const res = await fetch("/api/generateKey", {
+        const res = await fetch("/api/fetchKeys", {
             headers: {
                 "Content-Type": "application/json"
             },
