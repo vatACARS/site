@@ -139,9 +139,8 @@ export default function Me() {
         setGenkeyMessage(res.message);
         if(res.success) {
             fetchApiKeys();
-        } else {
-            setGenkeyWaiting(false);
         }
+        setGenkeyWaiting(false);
     }
 
     async function deleteKey(token) {
