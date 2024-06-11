@@ -62,7 +62,7 @@ export default function Index() {
                             <HiOutlineDownload />
                             <p className="flex flex-row items-center space-x-1">
                                 <span>vatACARS Hub</span>
-                                <span className="text-xs text-slate-500">v0.1.0</span>
+                                <span className="text-xs text-slate-500">v0.1.2</span>
                             </p>
                         </span>
                     </a>
