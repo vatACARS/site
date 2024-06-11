@@ -2,6 +2,7 @@ import { randomBytes } from "node:crypto";
 import { getIronSession } from "iron-session";
 import { sessionOptions, SessionData } from "../../lib/session";
 import { NextApiRequest, NextApiResponse } from "next";
+import agenda from "../../lib/agenda";
 import type { AuthTokenLink } from "../../lib/types";
 
 import { PrismaClient } from "@prisma/client";
@@ -34,6 +35,8 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
             }
         }
     });
+
+    agenda.schedule("in 1 month", "invalidate auth token", { token })
 
     session.user.data.authToken = [{ token, created, expires }];
 
