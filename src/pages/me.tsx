@@ -162,7 +162,7 @@ export default function Me() {
 
     useEffect(() => {
         fetchApiKeys();
-    }, [ ]);
+    }, [ user ]);
 
     if (!user) return <p>Please wait...</p>;
     if (!user.data.authorised) return <p>Redirecting you...</p>
