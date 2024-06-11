@@ -32,5 +32,5 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         }
     }
 
-    return res.status(200).json(vatACARSUserData);
+    return res.status(200).json({ success: true, vatACARSUserData });
 }
