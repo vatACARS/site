@@ -301,7 +301,7 @@ export default function Me() {
                                     {apiKeys.map(tokenData => (
                                         <tr className="bg-slate-100 border-b transition duration-300 ease-in-out hover:bg-slate-200">
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap flex items-center space-x-2 group">
-                                                <span className="bg-gray-200 px-2 py-1 rounded-md group-hover:bg-indigo-100 group-hover:shadow-sm transform transition duration-200">{tokenData.auth_token.substring(0, 7)} ...</span>
+                                                <span className="bg-gray-200 px-2 py-1 rounded-md group-hover:bg-indigo-100 group-hover:shadow-sm transform transition duration-200">{tokenData.token.substring(0, 7)} ...</span>
                                                 <span className="text-xs group-hover:underline">(click to reveal)</span>
                                             </td>
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
