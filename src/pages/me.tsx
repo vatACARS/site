@@ -40,13 +40,14 @@ export default function Me() {
     const [genkeyMessage, setGenkeyMessage] = useState("");
 
     const [apiKeys, setApiKeys] = useState([]);
+    const [tokenVisible, setTokenVisible] = useState(false);
 
     const [selectedNickname, setSelectedNickname] = useState("1");
 
     const [tab, setTab] = useState("account");
-    const { user } = useUser({ redirectTo: "/api/oauth" });
+    //const { user } = useUser({ redirectTo: "/api/oauth" });
 
-    /*const user = {
+    const user = {
         data: {
             authorised: true,
             cid: "100000",
@@ -81,7 +82,7 @@ export default function Me() {
                 expires: new Date().setMonth(new Date().getMonth() + 1)
             }]
         }
-    }*/
+    }
 
     const handleRadioChange = (event) => {
         setSelectedNickname(event.target.value);
@@ -105,6 +106,10 @@ export default function Me() {
         setMessage(res.message);
     }
 
+    function revealToken() {
+        setTokenVisible(true);
+    }
+
     async function fetchApiKeys() {
         if(!user) return;
         if (!user.data.authorised) return;
@@ -117,6 +122,14 @@ export default function Me() {
         }).then(resp => resp.json());
 
         if(res.success) setApiKeys(res.apiKeys);
+
+        setApiKeys([{
+            "id": "6667c02ee816b680cf1067c9",
+            "token": "vAcV1-ff78ece1ad3cf5100499d1b40d",
+            "created": "2024-06-11T03:10:38.241Z",
+            "expires": "2024-07-11T03:10:38.241Z",
+            "acars_user_id": "665c844f256f8274f6ed4a69"
+        }]);
     }
 
     async function generateKey() {
@@ -139,9 +152,25 @@ export default function Me() {
         }
     }
 
+    async function deleteKey(token) {
+        if (!user.data.authorised) return;
+        setGenkeyMessage("");
+
+        const res = await fetch("/api/deleteKey", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ token })
+        }).then(resp => resp.json());
+
+        setGenkeyMessage(res.message);
+        if(res.success) fetchApiKeys();
+    }
+
     useEffect(() => {
         fetchApiKeys();
-    }, [ user ]);
+    }, [ /* user */ ]);
 
     if (!user) return <p>Please wait...</p>;
     if (!user.data.authorised) return <p>Redirecting you...</p>
@@ -170,7 +199,7 @@ export default function Me() {
                     <button onClick={() => setTab("keys")} className={`flex items-center h-10 px-2 py-2 -mb-px text-center bg-transparent border-b-2 ${tab === "keys" ? "text-blue-600 border-blue-500" : "text-gray-700 border-transparent cursor-base hover:border-gray-400"} sm:px-4 -px-1 whitespace-nowrap focus:outline-none`}>
                         <BsKey />
                         <span className="mx-1 text-sm sm:text-base">
-                            API Keys
+                            Tokens
                         </span>
                     </button>
                 </div>
@@ -284,7 +313,7 @@ export default function Me() {
                                 <thead>
                                     <tr className="bg-slate-300">
                                         <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
-                                            Key
+                                            Token
                                         </th>
                                         <th scope="col" className="text-sm font-medium text-gray-900 px-6 py-4 text-left">
                                             Created
@@ -301,8 +330,8 @@ export default function Me() {
                                     {apiKeys.map(tokenData => (
                                         <tr className="bg-slate-100 border-b transition duration-300 ease-in-out hover:bg-slate-200">
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap flex items-center space-x-2 group">
-                                                <span className="bg-gray-200 px-2 py-1 rounded-md group-hover:bg-indigo-100 group-hover:shadow-sm transform transition duration-200">{tokenData.token.substring(0, 7)} ...</span>
-                                                <span className="text-xs group-hover:underline">(click to reveal)</span>
+                                                <span className="bg-gray-200 px-2 py-1 rounded-md group-hover:bg-indigo-100 group-hover:shadow-sm transform transition duration-200">{tokenVisible ? tokenData.token : `${tokenData.token.substring(0, 10)}...`}</span>
+                                                {!tokenVisible && <a onClick={() => revealToken()} className="text-xs group-hover:underline cursor-pointer">(click to reveal)</a>}
                                             </td>
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
                                                 {getRelativeTime(new Date(tokenData.created))}
@@ -315,7 +344,7 @@ export default function Me() {
                                                     <FaRecycle />
                                                     <span>Regenerate</span>
                                                 </a>
-                                                <a className="rounded-md bg-red-300 flex flex-row items-center space-x-2 py-1 px-2">
+                                                <a onClick={() => deleteKey(tokenData.token)} className="rounded-md bg-red-300 flex flex-row items-center space-x-2 py-1 px-2">
                                                     <FaTrash />
                                                     <span>Delete</span>
                                                 </a>
@@ -334,7 +363,7 @@ export default function Me() {
                                 <a onClick={() => generateKey()} className={`rounded-md flex flex-row space-x-2 items-center py-2 px-3 transition-all duration-300 ${genkeyWaiting == true ? "bg-slate-300" : "bg-green-300 cursor-pointer"}`}>
                                     {genkeyWaiting ? (<p>Please wait...</p>) : (<>
                                         <FaRegStar />
-                                        <span>Generate New Key</span>
+                                        <span>Generate New Token</span>
                                     </>)}
                                 </a>
                             </div>
