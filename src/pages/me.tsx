@@ -305,7 +305,7 @@ export default function Me() {
                                                 <span className="text-xs group-hover:underline">(click to reveal)</span>
                                             </td>
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
-                                                {getRelativeTime(tokenData.created)}
+                                                {getRelativeTime(new Date(tokenData.created))}
                                             </td>
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap">
                                                 {new Date(tokenData.expires).toLocaleString()}
