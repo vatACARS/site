@@ -106,6 +106,7 @@ export default function Me() {
     }
 
     async function fetchApiKeys() {
+        if(!user) return;
         if (!user.data.authorised) return;
 
         const res = await fetch("/api/fetchKeys", {
