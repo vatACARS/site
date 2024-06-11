@@ -324,7 +324,7 @@ export default function Me() {
                                     ))}
                                 </tbody>
                             </table>
-                            {!user.data.authToken[0] && (
+                            {!apiKeys[0] && (
                                 <div className="bg-slate-100 border-b transition duration-300 ease-in-out hover:bg-slate-200 text-gray-900 px-6 py-4 whitespace-nowrap">
                                     <p className="text-center">You have no keys currently</p>
                                 </div>
