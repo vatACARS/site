@@ -14,6 +14,7 @@ model VatACARSUser {
   access_token  String          @unique
   refresh_token String
   discord_user  DiscordUser?
+  auth_token    AuthToken?
 }
 
 model DiscordUser {
@@ -21,6 +22,15 @@ model DiscordUser {
   discord_id    String          @unique
   access_token  String          @unique
   refresh_token String
+  acars_user_id String          @unique @db.ObjectId
+  VatACARSUser  VatACARSUser    @relation(fields: [acars_user_id], references: [id])
+}
+
+model AuthToken {
+  id            String          @id @default(auto()) @map("_id") @db.ObjectId
+  token         String          @unique
+  created       DateTime
+  expires       DateTime
   acars_user_id String          @unique @db.ObjectId
   VatACARSUser  VatACARSUser    @relation(fields: [acars_user_id], references: [id])
 }
