@@ -16,5 +16,5 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         include: { auth_token: true }
     });
 
-    return res.json({ success: true, apiKeys: [ VatACARSUser.auth_token ] || [] });
+    return res.json({ success: true, apiKeys: VatACARSUser.auth_token ? [ VatACARSUser.auth_token ] : [] });
 }
