@@ -1,7 +1,7 @@
-import { randomBytes } from "node:crypto";
 import { getIronSession } from "iron-session";
 import { sessionOptions, SessionData } from "../../lib/session";
 import { NextApiRequest, NextApiResponse } from "next";
+import agenda from "../../lib/agenda";
 
 import { PrismaClient } from "@prisma/client";
 
@@ -23,6 +23,12 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
 
     await prisma.authToken.delete({
         where: {
+            token
+        }
+    });
+
+    await agenda.cancel({
+        data: {
             token
         }
     });
