@@ -49,7 +49,7 @@ export default function Stats() {
                             </div>
                             <div className="flex flex-col space-y-2">
                                 {atsu.sectors.map(sector => (
-                                    <div key={sector.id} className="flex flex-row space-x-2">
+                                    <div key={sector.id} className="flex flex-row">
                                         <span className="w-48">{sector.callsign} ({sector.name})</span>
                                         <span>{(sector.frequency / 1000000).toFixed(3).replace(/\.?0+$/, '')}{(sector.frequency / 1000000).toFixed(3).replace(/\.?0+$/, '').indexOf(".") == -1 && ".0"}</span>
                                     </div>
