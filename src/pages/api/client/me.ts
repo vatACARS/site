@@ -14,12 +14,36 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
     let VatACARSUser = await prisma.vatACARSUser.findUnique({ where: { id: VatACARSUserToken.acars_user_id } });
     if(!VatACARSUser) return res.status(500).json({ success: false, message: "Missing user for auth token. Please email contact@vatacars.com" });
 
-    const vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
+    let vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
         headers: {
             Authorization: `Bearer ${VatACARSUser.access_token}`,
             Accept: "application/json"
         },
     }).then((res) => res.json());
+
+    if(!vatsimUserInfo.data) {
+        const body = new URLSearchParams({
+            client_id: process.env.vatsim_client_id,
+            client_secret: process.env.vatsim_client_secret,
+            grant_type: "refresh_token",
+            code: VatACARSUser.refresh_token,
+        }).toString();
+    
+        const { access_token = null, refresh_token, token_type = "Bearer" } = await fetch("https://auth.vatsim.net/oauth/token", {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            method: "POST",
+            body,
+        }).then((res) => res.json());
+
+        prisma.vatACARSUser.update({ where: { id: VatACARSUser.id }, data: { access_token, refresh_token }});
+
+        vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
+            headers: {
+                Authorization: `Bearer ${access_token}`,
+                Accept: "application/json"
+            },
+        }).then((res) => res.json());
+    }
 
     const { cid, personal, vatsim } = vatsimUserInfo.data;
     const { name_first, name_last, email = "N/A" } = personal;
