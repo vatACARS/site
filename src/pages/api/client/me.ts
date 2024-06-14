@@ -21,14 +21,12 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         },
     }).then((res) => res.json());
 
-    console.log(vatsimUserInfo.data);
-
     if(!vatsimUserInfo.data) {
         const body = new URLSearchParams({
             client_id: process.env.vatsim_client_id,
             client_secret: process.env.vatsim_client_secret,
             grant_type: "refresh_token",
-            code: VatACARSUser.refresh_token,
+            refresh_token: VatACARSUser.refresh_token,
         }).toString();
     
         const { access_token = null, refresh_token, token_type = "Bearer" } = await fetch("https://auth.vatsim.net/oauth/token", {
