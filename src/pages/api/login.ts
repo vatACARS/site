@@ -63,7 +63,32 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
         if(user.discord_user) {
             const discordUser = await fetch("https://discord.com/api/users/@me", {
                 headers: { Authorization: `Bearer ${user.discord_user.access_token}` },
-            }).then((res) => res.json());
+            }).then((res) => res.json()).catch(async () => {
+                let body = new URLSearchParams({
+                    client_id: process.env.discord_client_id,
+                    client_secret: process.env.discord_client_secret,
+                    grant_type: "refresh_token",
+                    code: user.discord_user.refresh_token
+                }).toString();
+            
+                const { access_token = null, refresh_token, token_type = "Bearer" } = await fetch("https://discord.com/api/oauth2/token", {
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    method: "POST",
+                    body,
+                }).then((res) => res.json());
+
+                await prisma.vatACARSUser.update({
+                    where: { cid: session.user.data.cid },
+                    data: {
+                        discord_user: {
+                            update: {
+                                access_token: access_token.toString(),
+                                refresh_token: refresh_token.toString(),
+                            },
+                        },
+                    },
+                });
+            });
             if ("id" in user) {
                 discord = {
                     id: discordUser.id,
