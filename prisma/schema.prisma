@@ -25,7 +25,7 @@ model VATSIMUser {
   rating_id       Int
   rating_short    String
   rating_long     String
-  division_id     Int
+  division_id     String
   division_name   String
   region_id       String
   region_name     String
