@@ -30,7 +30,10 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         }).toString();
     
         const { access_token = null, refresh_token, token_type = "Bearer" } = await fetch("https://auth.vatsim.net/oauth/token", {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json"
+            },
             method: "POST",
             body,
         }).then((res) => res.json());
