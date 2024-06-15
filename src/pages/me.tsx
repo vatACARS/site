@@ -331,10 +331,10 @@ export default function Me() {
                                                 {new Date(tokenData.expires).toLocaleString()}
                                             </td>
                                             <td className="text-sm text-gray-900 px-6 py-4 whitespace-nowrap flex flex-row space-x-2">
-                                                <a className="cursor-pointer rounded-md bg-yellow-300 flex flex-row items-center space-x-2 py-1 px-2 transition-all duration-200 hover:bg-yellow-400">
+                                                {/*<a className="cursor-pointer rounded-md bg-yellow-300 flex flex-row items-center space-x-2 py-1 px-2 transition-all duration-200 hover:bg-yellow-400">
                                                     <FaRecycle />
                                                     <span>Regenerate</span>
-                                                </a>
+                                                </a>*/}
                                                 <a onClick={() => deleteKey(tokenData.token)} className="cursor-pointer rounded-md bg-red-300 flex flex-row items-center space-x-2 py-1 px-2 transition-all duration-200 hover:bg-red-400">
                                                     <FaTrash />
                                                     <span>Delete</span>
