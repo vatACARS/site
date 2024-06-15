@@ -21,6 +21,8 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         },
     }).then((res) => res.json());
 
+    console.log(vatsimUserInfo.data);
+
     if(!vatsimUserInfo.data) {
         const body = new URLSearchParams({
             client_id: process.env.vatsim_client_id,
