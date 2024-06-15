@@ -29,8 +29,8 @@ model VATSIMUser {
   division_name   String
   region_id       String
   region_name     String
-  sdivision_id    String
-  sdivision_name  String
+  sdivision_id    String?
+  sdivision_name  String?
   acars_user_id   String        @unique @db.ObjectId
   VatACARSUser    VatACARSUser  @relation(fields: [acars_user_id], references: [id])
 }
