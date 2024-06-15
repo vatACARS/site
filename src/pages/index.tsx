@@ -57,12 +57,12 @@ export default function Index() {
                             <span>Source Code</span>
                         </span>
                     </Link>
-                    <a href="https://dist.vatacars.com/releases/1.0.0/vatACARS Hub Setup 1.0.0.exe" target="_blank">
+                    <a href="https://dist.vatacars.com/releases/1.0.1/vatACARS Hub Setup 1.0.1.exe" target="_blank">
                         <span className="cursor-pointer flex flex-row items-center space-x-2 rounded-full py-2 px-4 text-slate-800 ring-slate-800 outline-2 font-semibold bg-slate-200" data-aos="fade-left" data-aos-duration="2000">
                             <HiOutlineDownload />
                             <p className="flex flex-row items-center space-x-1">
                                 <span>vatACARS Hub</span>
-                                <span className="text-xs text-slate-500">v1.0.0</span>
+                                <span className="text-xs text-slate-500">v1.0.1</span>
                             </p>
                         </span>
                     </a>
