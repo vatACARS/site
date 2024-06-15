@@ -48,6 +48,8 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
                 Accept: "application/json"
             },
         }).then((res) => res.json());
+
+        console.log(vatsimUserInfo.data);
     }
 
     const { cid, personal, vatsim } = vatsimUserInfo.data;
