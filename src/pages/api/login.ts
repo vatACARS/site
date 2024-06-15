@@ -26,7 +26,8 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
         where: { cid },
         include: {
             discord_user: true,
-            auth_token: true
+            auth_token: true,
+            vatsim_user: true
         }
     });
 
@@ -46,7 +47,8 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
             where: { cid },
             include: {
                 discord_user: true,
-                auth_token: true
+                auth_token: true,
+                vatsim_user: true
             }
         });
     } else {
@@ -78,7 +80,7 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
                 }).then((res) => res.json());
 
                 await prisma.vatACARSUser.update({
-                    where: { cid: session.user.data.cid },
+                    where: { cid },
                     data: {
                         discord_user: {
                             update: {
@@ -105,6 +107,48 @@ export default async function loginRoute(req: NextApiRequest, res: NextApiRespon
                 creatred: user.auth_token.created,
                 expires: user.auth_token.expires
             }]
+        }
+
+        if(user.vatsim_user) {
+            await prisma.vatACARSUser.update({
+                where: { cid },
+                data: {
+                    vatsim_user: {
+                        update: {
+                            name_first, name_last,
+                            rating_id: rating.id,
+                            rating_short: rating.short,
+                            rating_long: rating.long,
+                            division_id: division.id,
+                            division_name: division.name,
+                            region_id: region.id,
+                            region_name: region.name,
+                            sdivision_id: subdivision.id,
+                            sdivision_name: subdivision.name,
+                        },
+                    },
+                },
+            });
+        } else {
+            await prisma.vatACARSUser.update({
+                where: { cid },
+                data: {
+                    vatsim_user: {
+                        create: {
+                            name_first, name_last,
+                            rating_id: rating.id,
+                            rating_short: rating.short,
+                            rating_long: rating.long,
+                            division_id: division.id,
+                            division_name: division.name,
+                            region_id: region.id,
+                            region_name: region.name,
+                            sdivision_id: subdivision.id,
+                            sdivision_name: subdivision.name,
+                        },
+                    },
+                },
+            });
         }
     }
 

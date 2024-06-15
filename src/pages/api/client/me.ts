@@ -11,55 +11,34 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
     let VatACARSUserToken = await prisma.authToken.findUnique({ where: { token }} );
     if(!VatACARSUserToken) return res.status(401).json({ success: false, message: "Bad auth token" });
 
-    let VatACARSUser = await prisma.vatACARSUser.findUnique({ where: { id: VatACARSUserToken.acars_user_id } });
-    if(!VatACARSUser) return res.status(500).json({ success: false, message: "Missing user for auth token. Please email contact@vatacars.com" });
+    let VatACARSUser = await prisma.vatACARSUser.findUnique({ where: { id: VatACARSUserToken.acars_user_id }, include: { vatsim_user: true } });
+    if(!VatACARSUser || !VatACARSUser.vatsim_user) return res.status(500).json({ success: false, message: "Missing user for auth token. Please email contact@vatacars.com" });
 
-    let vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
-        headers: {
-            Authorization: `Bearer ${VatACARSUser.access_token}`,
-            Accept: "application/json"
-        },
-    }).then((res) => res.json());
-
-    console.log(vatsimUserInfo.data);
-
-    if(!vatsimUserInfo.data) {
-        const body = new URLSearchParams({
-            client_id: process.env.vatsim_client_id,
-            client_secret: process.env.vatsim_client_secret,
-            grant_type: "refresh_token",
-            refresh_token: VatACARSUser.refresh_token,
-        }).toString();
     
-        const { access_token = null, refresh_token, token_type = "Bearer" } = await fetch("https://auth.vatsim.net/oauth/token", {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Accept": "application/json"
-            },
-            method: "POST",
-            body,
-        }).then((res) => res.json());
-
-        prisma.vatACARSUser.update({ where: { id: VatACARSUser.id }, data: { access_token, refresh_token }});
-
-        vatsimUserInfo = await fetch("https://auth.vatsim.net/api/user", {
-            headers: {
-                Authorization: `Bearer ${access_token}`,
-                Accept: "application/json"
-            },
-        }).then((res) => res.json());
-
-        console.log(vatsimUserInfo.data);
-    }
-
-    const { cid, personal, vatsim } = vatsimUserInfo.data;
-    const { name_first, name_last, email = "N/A" } = personal;
-    const { rating, division, region, subdivision } = vatsim;
+    const cid = VatACARSUser.cid;
+    const { name_first, name_last} = VatACARSUser.vatsim_user;
+    const rating = {
+        id: VatACARSUser.vatsim_user.rating_id,
+        long: VatACARSUser.vatsim_user.rating_long,
+        short: VatACARSUser.vatsim_user.rating_short
+    };
+    const division = {
+        id: VatACARSUser.vatsim_user.division_id,
+        name: VatACARSUser.vatsim_user.division_name
+    };
+    const region = {
+        id: VatACARSUser.vatsim_user.region_id,
+        name: VatACARSUser.vatsim_user.region_name
+    };
+    const subdivision = {
+        id: VatACARSUser.vatsim_user.sdivision_id,
+        name: VatACARSUser.vatsim_user.sdivision_name
+    };
 
     const vatACARSUserData = {
         data: {
             authorised: true,
-            cid, name_first, name_last, email, rating, division, region, subdivision
+            cid, name_first, name_last, rating, division, region, subdivision
         }
     }
 

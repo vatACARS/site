@@ -13,8 +13,26 @@ model VatACARSUser {
   cid           String          @unique
   access_token  String          @unique
   refresh_token String
+  vatsim_user   VATSIMUser?
   discord_user  DiscordUser?
   auth_token    AuthToken?
+}
+
+model VATSIMUser {
+  id              String        @id @default(auto()) @map("_id") @db.ObjectId
+  name_first      String
+  name_last       String
+  rating_id       Int
+  rating_short    String
+  rating_long     String
+  division_id     Int
+  division_name   String
+  region_id       String
+  region_name     String
+  sdivision_id    String
+  sdivision_name  String
+  acars_user_id   String        @unique @db.ObjectId
+  VatACARSUser    VatACARSUser  @relation(fields: [acars_user_id], references: [id])
 }
 
 model DiscordUser {
