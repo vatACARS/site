@@ -3,18 +3,17 @@ import 'ol/ol.css';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-import { fromLonLat, transform } from 'ol/proj';
+import { fromLonLat } from 'ol/proj';
 import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
-import { MultiPolygon, Point, Polygon } from 'ol/geom';
+import { MultiPolygon, Point } from 'ol/geom';
 import GeoJSON from 'ol/format/GeoJSON';
 import Style from 'ol/style/Style';
 import { Fill, Stroke, Icon, Text } from 'ol/style';
 import Select from 'ol/interaction/Select';
 
 import FirBoundaries from '../../../public/data/firboundaries.json';
-import { Coordinate } from 'ol/coordinate';
 
 export default function MapComponent({ setSelectedFeature }) {
     const mapRef = useRef(null);
