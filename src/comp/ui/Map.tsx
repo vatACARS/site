@@ -10,12 +10,13 @@ import Feature from 'ol/Feature';
 import { MultiPolygon, Point } from 'ol/geom';
 import GeoJSON from 'ol/format/GeoJSON';
 import Style from 'ol/style/Style';
+import { defaults as defaultControls } from 'ol/control';
 import { Fill, Stroke, Icon, Text } from 'ol/style';
 import Select from 'ol/interaction/Select';
 
 import FirBoundaries from '../../../public/data/firboundaries.json';
 
-export default function MapComponent({ setSelectedFeature }) {
+export default function MapComponent({ setSelectedFeature, className }) {
     const mapRef = useRef(null);
 
     async function generateMap() {
@@ -68,9 +69,9 @@ export default function MapComponent({ setSelectedFeature }) {
 
             features.push(feature);
 
-            for(let sector of atsu.sectors) {
-                let fir = FirBoundaries.features.find(f => f.properties.id === sector.name);
-                if(fir) {
+            for (let sector of atsu.sectors) {
+                let fir = FirBoundaries.features.find(f => f.properties.id === `Y${sector.name}`);
+                if (fir) {
                     let geometry = new GeoJSON().readGeometry(fir.geometry) as MultiPolygon;
                     geometry.transform('EPSG:4326', 'EPSG:3857');
                     let polyFeature = new Feature({
@@ -101,11 +102,9 @@ export default function MapComponent({ setSelectedFeature }) {
                     }));
 
                     polyFeatures.push(polyFeature);
-                } 
+                }
             }
         }
-
-        console.log(polyFeatures)
 
         const vectorLayer = new VectorLayer({
             source: new VectorSource({ features }),
@@ -120,8 +119,7 @@ export default function MapComponent({ setSelectedFeature }) {
             layers: [
                 new TileLayer({
                     source: new XYZ({
-                        url: 'https://{a-c}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
-                        attributions: '© <a href="https://cartodb.com/attribution">CartoDB</a>',
+                        url: 'https://{a-c}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'
                     }),
                 }),
                 polygonLayer,
@@ -131,12 +129,32 @@ export default function MapComponent({ setSelectedFeature }) {
                 center: fromLonLat([0, 0]),
                 zoom: 2,
             }),
+            controls: defaultControls({
+                zoom: false,
+            }),
         });
 
-        const select = new Select();
-        map.addInteraction(select);
+        const selectedStyle = feature => new Style({
+            text: new Text({
+                text: feature.get('label'),
+                offsetY: -30,
+                fill: new Fill({
+                    color: '#fff',
+                }),
+                stroke: new Stroke({
+                    color: '#000',
+                    width: 2
+                })
+            })
+        });
 
-        select.on('select', function (e) {
+        const pointSelect = new Select({
+            condition: (evt) => evt.type === 'singleclick' && evt.map.getFeaturesAtPixel(evt.pixel).some(f => f.getGeometry() instanceof Point),
+            style: selectedStyle
+        });
+        map.addInteraction(pointSelect);
+
+        pointSelect.on('select', function (e) {
             if (e.selected.length > 0) {
                 const feature = e.selected[0];
                 const geometry = feature.getGeometry();
@@ -149,12 +167,13 @@ export default function MapComponent({ setSelectedFeature }) {
                         duration: 1000,
                     });
                     setSelectedFeature(feature);
+                    feature.setStyle(selectedStyle(feature));
                 }
 
-                if (geometry instanceof MultiPolygon) {
-                    
+                /*if (geometry instanceof MultiPolygon) {
+
                     setSelectedFeature(feature);
-                }
+                }*/
             }
         });
 
@@ -170,5 +189,5 @@ export default function MapComponent({ setSelectedFeature }) {
         return () => map && map.setTarget(null);
     }, []);
 
-    return <div ref={mapRef} style={{ height: "100vh", width: "100%" }} />;
+    return <div ref={mapRef} className={className} />;
 }
