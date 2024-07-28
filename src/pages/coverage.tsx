@@ -5,6 +5,7 @@ import SEO from '../comp/meta/SEO';
 
 import { FaPlane } from "react-icons/fa6";
 import { BiTransferAlt } from "react-icons/bi";
+import { IoArrowBack } from "react-icons/io5";
 
 function timeAgo(date) {
   const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
@@ -39,9 +40,14 @@ export default function Stats2() {
       <div>
         <div className="h-full w-full flex flex-col bg-[#090909]">
           <div className="h-[72px]">
-            <div className="flex h-full px-12 text-[#cdcdcd] text-2xl items-center justify-between">
-              <p>vatACARS Live Coverage Map</p>
-            </div>
+            <a href="/">
+              <div className="flex flex-row space-x-4 h-full px-12 text-[#cdcdcd] text-2xl items-center">
+                <div className="py-1 px-2 rounded-md border-l-2 border-notsodark hover:border-blue-500 hover:text-blue-500 cursor-pointer transition-all duration-300">
+                  <IoArrowBack />
+                </div>
+                <p>Live Coverage Map</p>
+              </div>
+            </a>
           </div>
           <div className="relative border-t-2 border-b-2 border-[#262626] bg-[#262626] overflow-hidden">
             <Map setSelectedFeature={setSelectedFeature} setLiveInfo={setLiveInfo} className="h-[calc(100vh-124px)] w-[100%]" />
