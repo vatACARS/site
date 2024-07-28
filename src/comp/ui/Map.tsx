@@ -17,7 +17,6 @@ import { Fill, Stroke, Icon, Text } from 'ol/style';
 import Select from 'ol/interaction/Select';
 
 import FirBoundaries from '../../../public/data/firboundaries.json';
-import { set } from 'ol/transform';
 
 const fetcher = (url) => fetch(url, {headers: { "Content-Type": "application/json" }}).then((res) => res.json());
 
@@ -30,7 +29,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
     const [grabbingMap, setGrabbingMap] = useState(false);
 
     const { data: liveInfo, error } = useSWR('/api/misc/getStats', fetcher, { refreshInterval: 30000 });
-    const { data: simawareData, error: simawareError } = useSWR('/api/misc/simawareStats', fetcher, { refreshInterval: 60000 });
+    const { data: networkData, error: networkError } = useSWR('/api/misc/network', fetcher, { refreshInterval: 60000 });
 
     useEffect(() => {
         if (!map) {
@@ -38,7 +37,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         } else {
             updateMap();
         }
-    }, [liveInfo, simawareData]);
+    }, [liveInfo, networkData]);
 
     const initializeMap = () => {
         const initialStationLayer = new VectorLayer({ source: new VectorSource() });
@@ -80,6 +79,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                 }),
                 text: new Text({
                     text: feature.get('name'),
+                    font: '12px Montserrat',
                     offsetY: -30,
                     fill: new Fill({
                         color: '#aaaaff',
@@ -164,6 +164,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                     }),
                     text: new Text({
                         text: atsu.station_code,
+                        font: '12px Montserrat',
                         offsetY: -30,
                         fill: new Fill({
                             color: '#fff',
@@ -200,6 +201,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                             }),
                             text: new Text({
                                 text: sector.callsign,
+                                font: '8px Montserrat',
                                 offsetY: 0,
                                 fill: new Fill({
                                     color: '#fff',
@@ -217,9 +219,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
             }
         }
 
-        if(simawareData) {
-            for(const pilot of simawareData.pilots) {
-                if(!simawareData.airports.values().some(airport => airport.aircraft.groundArr?.includes(pilot.cid) || airport.aircraft.groundDep?.includes(pilot.cid))) {
+        if(networkData) {
+            for(const pilot of networkData.pilots) {
+                if(!networkData.airports.values().some(airport => airport.aircraft.groundArr?.includes(pilot.cid) || airport.aircraft.groundDep?.includes(pilot.cid))) {
                     const { latitude, longitude, heading, altitude } = pilot;
                     let feature = new Feature({
                         geometry: new Point([longitude, latitude]),
@@ -233,7 +235,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                                 anchor: [0.5, 0.5],
                                 scale: 1.2,
                                 rotation: heading * (Math.PI / 180),
-                                src: `/img/a320${Math.floor(Math.random() * 2) == 1 ? "dark" : ""}.webp`,
+                                src: `/img/a320dark.webp`,
                             }),
                             /*text: new Text({
                                 text: pilot.callsign,
@@ -295,6 +297,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                 }),
                 text: new Text({
                     text: atsu.station_code,
+                    font: '12px Montserrat',
                     offsetY: -30,
                     fill: new Fill({
                         color: '#fff'
