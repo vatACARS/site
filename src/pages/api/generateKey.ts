@@ -22,7 +22,7 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
 
     const token = `vAcV1-${randomBytes(26).toString('hex').slice(0, 26)}`;
     const created = new Date();
-    const expires = new Date(new Date().setMonth(new Date().getMonth() + 1))
+    const expires = new Date(new Date().setMonth(new Date().getMonth() + 6))
     await prisma.vatACARSUser.update({
         where: { cid: session.user.data.cid },
         data: {
@@ -36,7 +36,7 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
         }
     });
 
-    agenda.schedule("in 1 month", "invalidate auth token", { token })
+    agenda.schedule("in 6 months", "invalidate auth token", { token })
 
     session.user.data.authToken = [{ token, created, expires }];
 
