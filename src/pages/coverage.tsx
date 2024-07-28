@@ -113,6 +113,7 @@ export default function Stats2() {
               <div className="flex space-x-4">
                 <p className="after:content-['|'] after:ml-4">FIR Boundaries &copy; <a href="https://github.com/vatsimnetwork/vatspy-data-project" className="text-[#565656] underline">VATSIM</a></p>
                 <p className="after:content-['|'] after:ml-4">Map Imagery &copy; <a href="https://cartodb.com/attribution" className="text-[#565656] underline">CartoDB</a></p>
+                <p className="after:content-['|'] after:ml-4">Aircraft Icons &copy; <a href="https://www.patreon.com/vatsimradar24" className="text-[#565656] underline">VATSIM Radar</a></p>
                 <p className="text-[#565656] font-semibold">&copy; vatACARS Team 2024</p>
               </div>
             </div>
