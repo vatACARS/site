@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function userRoute(req: NextApiRequest, res: NextApiResponse) {
-    const response = await fetch("https://vatsim-radar.com/api/data/vatsim/data", {
+    const response = await fetch("https://api.vatacars.com/data/network", {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
