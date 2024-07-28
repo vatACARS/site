@@ -43,7 +43,7 @@ export default function Footer() {
                             <Link href="/">
                                 <li className="cursor-pointer transition-all duration-300 hover:text-slate-50">Homepage</li>
                             </Link>
-                            <Link href="/me">
+                            <Link href="/profile">
                                 <li className="cursor-pointer transition-all duration-300 hover:text-slate-50">My Profile</li>
                             </Link>
                         </ul>
@@ -63,6 +63,11 @@ export default function Footer() {
                             </a>
                         </div>
                     </div>
+                </div>
+                <div className="flex flex-col mt-4 text-kindadark text-center text-sm">
+                    <p>&copy; {new Date().getFullYear()} vatACARS Team. All rights reserved.</p>
+                    <span>Disclaimer: The information contained on this website is for informational purposes only and should not be used for air navigation.</span>
+                    <span>vatACARS is not affiliated with or endorsed by vatSys nor VATSIM (including any divisions).</span>
                 </div>
             </div>
         </footer>
