@@ -20,7 +20,7 @@ export default function ServicesStatusApp({ Component, pageProps: { ...pageProps
 	};
 
 	return (
-		<>
+		<main className="bg-kindadark">
 			<Component {...pageProps} />
 			{!showConsent && (
 				<div className="fixed inset-0 bg-slate-700 bg-opacity-70">
@@ -38,6 +38,6 @@ export default function ServicesStatusApp({ Component, pageProps: { ...pageProps
 					</div>
 				</div>
 			)}
-		</>
+		</main>
 	);
 }
