@@ -17,16 +17,20 @@ import { Fill, Stroke, Icon, Text } from 'ol/style';
 import Select from 'ol/interaction/Select';
 
 import FirBoundaries from '../../../public/data/firboundaries.json';
+import { set } from 'ol/transform';
 
 const fetcher = (url) => fetch(url, {headers: { "Content-Type": "application/json" }}).then((res) => res.json());
 
-export default function MapComponent({ setSelectedFeature, setLiveInfo, className }) {
+export default function MapComponent({ setSelectedFeature, setLiveInfo, className, enableInteractions = true }) {
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
-    const [vectorLayer, setVectorLayer] = useState(null);
-    const [polygonLayer, setPolygonLayer] = useState(null);
+    const [stationLayer, setStationLayer] = useState(null);
+    const [airspaceLayer, setAirspaceLayer] = useState(null);
+    const [aircraftLayer, setAircraftLayer] = useState(null);
+    const [grabbingMap, setGrabbingMap] = useState(false);
 
     const { data: liveInfo, error } = useSWR('/api/misc/getStats', fetcher, { refreshInterval: 30000 });
+    const { data: simawareData, error: simawareError } = useSWR('/api/misc/simawareStats', fetcher, { refreshInterval: 60000 });
 
     useEffect(() => {
         if (!map) {
@@ -34,11 +38,12 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         } else {
             updateMap();
         }
-    }, [liveInfo]);
+    }, [liveInfo, simawareData]);
 
     const initializeMap = () => {
-        const initialVectorLayer = new VectorLayer({ source: new VectorSource() });
-        const initialPolygonLayer = new VectorLayer({ source: new VectorSource() });
+        const initialStationLayer = new VectorLayer({ source: new VectorSource() });
+        const initialAirspaceLayer = new VectorLayer({ source: new VectorSource() });
+        const initialAircraftLayer = new VectorLayer({ source: new VectorSource() });
 
         const initialMap = new Map({
             target: mapRef.current,
@@ -48,8 +53,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                         url: 'https://{a-c}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png',
                     }),
                 }),
-                initialPolygonLayer,
-                initialVectorLayer,
+                initialAirspaceLayer,
+                initialAircraftLayer,
+                initialStationLayer,
             ],
             view: new View({
                 center: fromLonLat([0, 0]),
@@ -61,8 +67,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         });
 
         setMap(initialMap);
-        setVectorLayer(initialVectorLayer);
-        setPolygonLayer(initialPolygonLayer);
+        setStationLayer(initialStationLayer);
+        setAirspaceLayer(initialAirspaceLayer);
+        setAircraftLayer(initialAircraftLayer);
 
         const selectedStyle = (feature) =>
             new Style({
@@ -84,30 +91,41 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                 }),
             });
 
-        const pointSelect = new Select({
-            condition: (evt) =>
-                evt.type === 'singleclick' &&
-                evt.map.getFeaturesAtPixel(evt.pixel).some((f) => f.getGeometry() instanceof Point),
-            style: selectedStyle,
-        });
-        initialMap.addInteraction(pointSelect);
+        if(enableInteractions) {
+            const pointSelect = new Select({
+                condition: (evt) =>
+                    evt.type === 'singleclick' &&
+                    evt.map.getFeaturesAtPixel(evt.pixel).some((f) => f.getGeometry() instanceof Point),
+                style: selectedStyle,
+            });
+            initialMap.addInteraction(pointSelect);
 
-        pointSelect.on('select', function (e) {
-            if (e.selected.length > 0) {
-                const feature = e.selected[0];
-                const geometry = feature.getGeometry();
+            pointSelect.on('select', function (e) {
+                if (e.selected.length > 0) {
+                    const feature = e.selected[0];
+                    const geometry = feature.getGeometry();
 
-                if (geometry instanceof Point) {
-                    const coordinates = geometry.getCoordinates();
-                    initialMap.getView().animate({
-                        center: coordinates,
-                        zoom: 5,
-                        duration: 1000,
-                    });
-                    setSelectedFeature(feature);
-                    feature.setStyle(selectedStyle(feature));
+                    if (geometry instanceof Point) {
+                        const coordinates = geometry.getCoordinates();
+                        initialMap.getView().animate({
+                            center: coordinates,
+                            zoom: 5,
+                            duration: 1000,
+                        });
+                        setSelectedFeature(feature);
+                        feature.setStyle(selectedStyle(feature));
+                    }
                 }
-            }
+            });
+        }
+
+        initialMap.getTargetElement().style.cursor = 'grab';
+        initialMap.on('pointerdrag', function() {
+            initialMap!.getTargetElement().style.cursor = 'grabbing';
+        });
+        initialMap.on('pointermove', () => {
+            setGrabbingMap(!grabbingMap);
+            initialMap.getTargetElement().style.cursor = grabbingMap ? 'grab' : 'pointer'
         });
     };
 
@@ -126,8 +144,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
             return item;
         });
 
-        let features = [];
-        let polyFeatures = [];
+        let stationFeatures = [];
+        let airspaceFeatures = [];
+        let aircraftFeatures = [];
         for (let atsu of processedData) {
             const { latitude, longitude } = atsu.approxLoc;
             let feature = new Feature({
@@ -157,7 +176,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                 })
             );
 
-            features.push(feature);
+            stationFeatures.push(feature);
 
             for (let sector of atsu.sectors) {
                 let fir = FirBoundaries.features.find((f) => f.properties.id === `Y${sector.name}`);
@@ -193,16 +212,52 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                         })
                     );
 
-                    polyFeatures.push(polyFeature);
+                    airspaceFeatures.push(polyFeature);
                 }
             }
         }
 
-        vectorLayer.getSource().clear();
-        polygonLayer.getSource().clear();
+        if(simawareData) {
+            for(const pilot of simawareData.pilots) {
+                if(!simawareData.airports.values().some(airport => airport.aircraft.groundArr?.includes(pilot.cid) || airport.aircraft.groundDep?.includes(pilot.cid))) {
+                    const { latitude, longitude, heading, altitude } = pilot;
+                    let feature = new Feature({
+                        geometry: new Point([longitude, latitude]),
+                        name: pilot.callsign,
+                        details: pilot,
+                    });
 
-        vectorLayer.getSource().addFeatures(features);
-        polygonLayer.getSource().addFeatures(polyFeatures);
+                    feature.setStyle(
+                        new Style({
+                            image: new Icon({
+                                anchor: [0.5, 0.5],
+                                scale: 1.2,
+                                rotation: heading * (Math.PI / 180),
+                                src: `/img/a320${Math.floor(Math.random() * 2) == 1 ? "dark" : ""}.webp`,
+                            }),
+                            /*text: new Text({
+                                text: pilot.callsign,
+                                font: '12px Montserrat',
+                                offsetY: 25,
+                                fill: new Fill({
+                                    color: '#fff',
+                                })
+                            }),*/
+                        })
+                    );
+
+                    aircraftFeatures.push(feature);
+                }
+            }
+        }
+
+        stationLayer.getSource().clear();
+        airspaceLayer.getSource().clear();
+        aircraftLayer.getSource().clear();
+
+        stationLayer.getSource().addFeatures(stationFeatures);
+        airspaceLayer.getSource().addFeatures(airspaceFeatures);
+        aircraftLayer.getSource().addFeatures(aircraftFeatures);
     };
 
     async function generateMap() {
@@ -221,7 +276,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         });
 
         let features = [];
-        let polyFeatures = [];
+        let airspaceFeatures = [];
+        let aircraftFeatures = [];
+
         for (let atsu of processedData) {
             const { latitude, longitude } = atsu.approxLoc;
             let feature = new Feature({
@@ -283,17 +340,21 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                         })
                     }));
 
-                    polyFeatures.push(polyFeature);
+                    airspaceFeatures.push(polyFeature);
                 }
             }
         }
 
-        const vectorLayer = new VectorLayer({
+        const stationLayer = new VectorLayer({
             source: new VectorSource({ features }),
         });
 
-        const polygonLayer = new VectorLayer({
-            source: new VectorSource({ features: polyFeatures }),
+        const airspaceLayer = new VectorLayer({
+            source: new VectorSource({ features: airspaceFeatures }),
+        });
+
+        const aircraftLayer = new VectorLayer({
+            source: new VectorSource({ features: aircraftFeatures }),
         });
 
         const map = new Map({
@@ -304,8 +365,9 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
                         url: 'https://{a-c}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png'
                     }),
                 }),
-                polygonLayer,
-                vectorLayer,
+                airspaceLayer,
+                aircraftLayer,
+                stationLayer,
             ],
             view: new View({
                 center: fromLonLat([0, 0]),
@@ -335,34 +397,36 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
             })
         });
 
-        const pointSelect = new Select({
-            condition: (evt) => evt.type === 'singleclick' && evt.map.getFeaturesAtPixel(evt.pixel).some(f => f.getGeometry() instanceof Point),
-            style: selectedStyle
-        });
-        map.addInteraction(pointSelect);
+        if(enableInteractions) {
+            const pointSelect = new Select({
+                condition: (evt) => evt.type === 'singleclick' && evt.map.getFeaturesAtPixel(evt.pixel).some(f => f.getGeometry() instanceof Point),
+                style: selectedStyle
+            });
+            map.addInteraction(pointSelect);
 
-        pointSelect.on('select', function (e) {
-            if (e.selected.length > 0) {
-                const feature = e.selected[0];
-                const geometry = feature.getGeometry();
+            pointSelect.on('select', function (e) {
+                if (e.selected.length > 0) {
+                    const feature = e.selected[0];
+                    const geometry = feature.getGeometry();
 
-                if (geometry instanceof Point) {
-                    const coordinates = geometry.getCoordinates();
-                    map.getView().animate({
-                        center: coordinates,
-                        zoom: 5,
-                        duration: 1000,
-                    });
-                    setSelectedFeature(feature);
-                    feature.setStyle(selectedStyle(feature));
+                    if (geometry instanceof Point) {
+                        const coordinates = geometry.getCoordinates();
+                        map.getView().animate({
+                            center: coordinates,
+                            zoom: 5,
+                            duration: 1000,
+                        });
+                        setSelectedFeature(feature);
+                        feature.setStyle(selectedStyle(feature));
+                    }
+
+                    /*if (geometry instanceof MultiPolygon) {
+
+                        setSelectedFeature(feature);
+                    }*/
                 }
-
-                /*if (geometry instanceof MultiPolygon) {
-
-                    setSelectedFeature(feature);
-                }*/
-            }
-        });
+            });
+        }
 
         return map;
     }
