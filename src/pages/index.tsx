@@ -6,6 +6,7 @@ import Map from "../comp/ui/Map";
 import Footer from "../comp/ui/Footer";
 
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { HiOutlineDownload } from "react-icons/hi";
 
 export default function Home() {
     const [liveInfo, setLiveInfo] = useState(null);
@@ -24,9 +25,20 @@ export default function Home() {
                         Chat easily with ATC, keep your flight data in check, and enjoy seamless communication. Our tools make your flights smoother and more immersive.
                     </p>
                 </div>
+                <div className="pt-6 flex justify-center text-center md:text-left">
+                    <a href="https://dist.vatacars.com/releases/1.0.2/vatACARS Hub Setup 1.0.2.exe" target="_blank">
+                        <span className="cursor-pointer flex flex-row items-center space-x-2 rounded-full py-2 px-4 text-dark ring-dark outline-2 font-semibold bg-notsodark hover:text-notsodark hover:bg-dark transition-all duration-300">
+                            <HiOutlineDownload />
+                            <p className="flex flex-row items-center space-x-1">
+                                <span>vatACARS Hub</span>
+                                <span className="text-xs text-slate-500">v1.0.2</span>
+                            </p>
+                        </span>
+                    </a>
+                </div>
                 <div className="md:px-12 flex flex-col w-full justify-center py-12">
                     <div className="relative md:rounded-lg overflow-hidden w-full h-[50vh] border-2 md:border-4 border-dark shadow-xl">
-                        <Map setSelectedFeature={()=>null} setLiveInfo={setLiveInfo} enableInteractions={false} className="w-full h-full" />
+                        <Map setSelectedFeature={() => null} setLiveInfo={setLiveInfo} enableInteractions={false} className="w-full h-full" />
                         <a href="/coverage">
                             <div className="absolute top-5 right-5 pointer-cursor">
                                 <div className="p-2 bg-blue-500 rounded-md border-2 border-kindadark">
