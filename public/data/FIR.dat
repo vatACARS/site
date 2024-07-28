@@ -22,11 +22,11 @@ BIRD-W|Reykjavik ACC (West) - Reykjavik|BIRD_W3|BIRD-W
 BSW|Black Sea West Radar||BSW
 CZEG|Edmonton|EDM|CZEG
 CZEG|Edmonton|ZEG|CZEG
-CZQM|Moncton|MCN|CZQM
+CZQM|Moncton|CZQM|CZQM
 CZZV|Sept-Iles (CZUL SFC-280 / CZQM 290-ABV)||CZZV
 CZQX|Gander|GAND|CZQX
 CZQX|Gander|YQX|CZQX
-CZQO|Gander Oceanic|GAN|CZQO
+CZQO|Gander Oceanic|CZQO|CZQO
 CZQO-GOTA|Gander Oceanic Transition Area (CZQO SFC-280 / CZQX 290-ABV)||CZQO-GOTA
 CZUL|Montreal|MTL|CZUL
 CZVR|Vancouver|VAN|CZVR

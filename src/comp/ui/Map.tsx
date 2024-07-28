@@ -21,6 +21,25 @@ import { set } from 'ol/transform';
 
 const fetcher = (url) => fetch(url, {headers: { "Content-Type": "application/json" }}).then((res) => res.json());
 
+function fetchFIRData() {
+    return fetch('/data/FIR.dat')
+      .then((response) => response.text())
+      .then((data) => {
+        const FIRData = [];
+        data.split('\n').forEach((line) => {
+          if (line.startsWith(';')) return;
+          const values = line.split('|');
+          FIRData.push({
+            ICAO: values[0],
+            NAME: values[1],
+            CALLSIGN_PREFIX: values[2],
+            FIR_BOUNDARY: values[3],
+          });
+        });
+        return FIRData;
+      });
+  }
+  
 export default function MapComponent({ setSelectedFeature, setLiveInfo, className, enableInteractions = true }) {
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
@@ -41,6 +60,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
     }, [liveInfo, simawareData]);
 
     const initializeMap = () => {
+        const FIRData = fetchFIRData();
         const initialStationLayer = new VectorLayer({ source: new VectorSource() });
         const initialAirspaceLayer = new VectorLayer({ source: new VectorSource() });
         const initialAircraftLayer = new VectorLayer({ source: new VectorSource() });
@@ -129,11 +149,11 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         });
     };
 
-    const updateMap = () => {
+    const updateMap = async () => {
         if (error || !liveInfo) return;
 
         setLiveInfo(liveInfo);
-
+        const FIRData = await fetchFIRData();
         const processedData = liveInfo.map((item) => {
             try {
                 item.sectors = JSON.parse(item.sectors);
@@ -179,43 +199,46 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
             stationFeatures.push(feature);
 
             for (let sector of atsu.sectors) {
-                let fir = FirBoundaries.features.find((f) => f.properties.id === `Y${sector.name}`);
+              const FIREntry = FIRData.find((f) => f.CALLSIGN_PREFIX === sector.callsign.split('_')[0]);
+              if (FIREntry) {
+                const fir = FirBoundaries.features.find((f) => f.properties.id === `${FIREntry.ICAO}`);
                 if (fir) {
-                    let geometry = new GeoJSON().readGeometry(fir.geometry) as MultiPolygon;
-                    geometry.transform('EPSG:4326', 'EPSG:3857');
-                    let polyFeature = new Feature({
-                        geometry,
-                        name: sector.callsign,
-                        details: atsu,
-                    });
-
-                    polyFeature.setStyle(
-                        new Style({
-                            fill: new Fill({
-                                color: 'rgba(59, 130, 246, 0.1)',
-                            }),
-                            stroke: new Stroke({
-                                color: 'rgba(59, 130, 246, 0.5)',
-                                width: 1,
-                            }),
-                            text: new Text({
-                                text: sector.callsign,
-                                offsetY: 0,
-                                fill: new Fill({
-                                    color: '#fff',
-                                }),
-                                stroke: new Stroke({
-                                    color: '#000',
-                                    width: 2,
-                                }),
-                            }),
-                        })
-                    );
-
-                    airspaceFeatures.push(polyFeature);
+                  const geometry = new GeoJSON().readGeometry(fir.geometry) as MultiPolygon;
+                  geometry.transform('EPSG:4326', 'EPSG:3857');
+                  const polyFeature = new Feature({
+                    geometry,
+                    name: sector.callsign,
+                    details: atsu,
+                  });
+            
+                  polyFeature.setStyle(
+                    new Style({
+                      fill: new Fill({
+                        color: 'rgba(59, 130, 246, 0.1)',
+                      }),
+                      stroke: new Stroke({
+                        color: 'rgba(59, 130, 246, 0.5)',
+                        width: 1,
+                      }),
+                      text: new Text({
+                        text: sector.callsign,
+                        offsetY: 0,
+                        fill: new Fill({
+                          color: '#fff',
+                        }),
+                        stroke: new Stroke({
+                          color: '#000',
+                          width: 2,
+                        }),
+                      }),
+                    })
+                  );
+            
+                  airspaceFeatures.push(polyFeature);
                 }
+              }
             }
-        }
+        }    
 
         if(simawareData) {
             for(const pilot of simawareData.pilots) {
@@ -260,7 +283,7 @@ export default function MapComponent({ setSelectedFeature, setLiveInfo, classNam
         aircraftLayer.getSource().addFeatures(aircraftFeatures);
     };
 
-    async function generateMap() {
+    async function generateMap() { //Not used?
         if(error) return;
         if(!liveInfo) return;
         setLiveInfo(liveInfo);
