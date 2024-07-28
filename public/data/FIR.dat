@@ -1,12 +1,9 @@
-[FIRs]
-;ICAO|NAME|CALLSIGN PREFIX|FIR BOUNDARY
-;dummy codes for Adria CTR
 ADR|Adria Radar||ADR
 ADR-W|Adria Radar (West)|ADR_W|ADR-W
 ADR-E|Adria Radar (East)|ADR_E|ADR-E
 AGGG|Honiara||AGGG
 ANAU|Nauru||ANAU
-AYPM|Port Moresby||AYPM
+AYPM|Port Moresby|AYPM|AYPM
 BGGL|Nuuk||BGGL
 BIRD|Reykjavik||BIRD
 BIRD-E|Reykjavik ACC (East) - Reykjavik|BIRD_E|BIRD-E
@@ -330,7 +327,6 @@ LLLL|Tel Aviv|LLTA|LLLL
 LLLL|Tel Aviv|SHOLET|LLLL
 LLSC|Tel Aviv South||LLSC
 LLPT|Tel Aviv North|PLUTO|LLPT
-; dummy codes for Israel CVFR centers
 LLPL|Pluto|PLUTO|LLLL
 LLGV|Hagav|HAGAV|LLLL
 LMMM|Malta||LMMM
@@ -398,31 +394,31 @@ MMEX|Mexico||MMEX
 MMFR|Mexico||MMFR
 MMID|Merida|MID|MMID
 MMTY|Monterrey|MTY|MMTY
-MMZT|Mazatlan|MZT|MMZT
-MMFO|Mazatlan|MZT|MMZT
+MMZT|Mazatlan|MMZT|MMZT
+MMFO|Mazatlan|MMFO|MMZT
 MPZL|Panama||MPZL
 MTEG|Port-Au-Prince||MTEG
 MUFH|Havana|HAV|MUFH
 NAT|Shanwick & Gander|NAT|NAT
 NCRG|Rarotonga||NCRG
-NFFF|Nadi Oceanic||NFFF
+NFFF|Nadi Oceanic|NFFF|NFFF
 NFFN|Nadi||NFFN
 NVVV|Port Vila||NVVV
 NSTU|Pago Pago||NZZO
-NTTT|Tahiti Radio||NTTT
+NTTT|Tahiti Radio|NTTT|NTTT
 NTTC|Tahiti||NTTC
 NWWW|Noumea||NWWW
-NZZO|Auckland Radio||NZZO
+NZZO|Auckland Radio|NZZO|NZZO
 NZZO|Auckland Radio East|NZZO-E|NZZO
 NZZO|Auckland Radio (Tasman)|NZZO-TSN|NZZO
-NZAA|Auckland||NZAA
+NZAA|Auckland|NZAA|NZAA
 NZAA|Auckland (Raglan)|NZAA-R|NZAA
 NZCB|Christchurch (Bay)|NZCH-B|NZCB
 NZCT|Christchurch (Taranaki)|NZCH-T|NZCT
 NZCK|Christchurch (Kaikoura)|NZCH-K|NZCK
 NZCS|Christchurch (South)|NZCH-S|NZCS
-NZOH|Ohakea||NZOH
-NZCM|McMurdo (Mac)||NZCM
+NZOH|Ohakea|NZOH|NZOH
+NZCM|McMurdo (Mac)|NZCM|NZCM
 NSFA|Faleolo||NSFA
 OAKX|Kabul||OAKX
 OBBB|Bahrain||OBBB
@@ -524,7 +520,6 @@ SLLF|La Paz||SLLF
 SMPM|Paramaribo||SMPM
 SOOO|Cayenne||SOOO
 SPIM|Lima|LIM|SPIM
-; dummy codes for VATSIM callsigns
 SPI1|Lima North|SP-N|SPIM
 SPI2|Lima South|SP-S|SPIM
 SPI3|Lima North East|SP-E|SPIM
@@ -644,7 +639,7 @@ VVCL|Mekong|VCL|VVCL
 VVHN|Hanoi||VVHN
 VVHM|Ho Chi Minh||VVHM
 VYYF|Yangon||VYYF
-WAAF|Ujung Pandang||WAAF
+WAAF|Ujung Pandang|WAAF|WAAF
 WAAF-B|Ujung Pandang (Bali)|WAAF_B|WAAF-B
 WAAF-W|Ujung Pandang (West)|WAAF_W|WAAF-W
 WAAF-E|Ujung Pandang (East)|WAAF_E|WAAF-E
