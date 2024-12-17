@@ -1,5 +1,5 @@
 export default () => {
     return (
-        <p>test</p>
+        <p>Onboarding</p>
     )
 }

@@ -22,7 +22,7 @@ export const CookieConsent = () => {
     }
   }, [])
 
-  const handleConsent = (status: CookieConsentStatus) => {
+  const handleConsent = (status) => {
     localStorage.setItem(COOKIE_CONSENT_KEY, status || 'declined')
     setShowConsent(false)
   }

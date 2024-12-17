@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
  
+html {
+  scroll-behavior: smooth;
+}
+
+#scrollspy {
+  scroll-margin-top: 56px;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
