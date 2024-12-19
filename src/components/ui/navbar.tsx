@@ -20,6 +20,14 @@ export default () => {
     const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState("");
+    const [currentTime, setCurrentTime] = useState(new Date().toUTCString().slice(-12, -7));
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            setCurrentTime(new Date().toUTCString().slice(-12, -7));
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -105,28 +113,34 @@ export default () => {
 
                             </div>
                         </div>
-                        <div className="hidden md:flex items-center gap-4">
-                            {isLoading ? (
-                                <span className="loading loading-lg" />
-                            ) : user.username ? (
-                                <div className="dropdown relative inline-flex [--placement:bottom-end] [--auto-close:inside]">
-                                    <button id="dropdown-footer" type="button" className="dropdown-toggle btn bg-zinc-900/50 hover:bg-zinc-800" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
-                                        {user.username}
-                                        <span className="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
+                        <div className="flex items-center gap-4">
+                            <div className="hidden md:flex items-center gap-4">
+                                {isLoading ? (
+                                    <span className="loading loading-lg" />
+                                ) : user.username ? (
+                                    <div className="dropdown relative inline-flex text-zinc-400 hover:text-zinc-200 transition-colors duration-200 [--placement:bottom-end] [--auto-close:inside]">
+                                        <button id="dropdown-footer" type="button" className="dropdown-toggle flex items-center space-x-2" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
+                                            <span>{user.username}</span>
+                                            <span className="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
+                                        </button>
+                                        <ul className="dropdown-menu dropdown-open:opacity-100 hidden min-w-60 bg-zinc-800" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-footer">
+                                            {dropdownItem("/me", "Account Details")}
+                                            {dropdownItem("/me/history", "Connection History")}
+                                            <li className="dropdown-footer gap-2">
+                                                <button onClick={() => logOut()} disabled={loading} className="btn btn-error btn-soft btn-block">{loading ? <span className="loading" /> : "Sign Out"}</button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                ) : (
+                                    <button onClick={() => setModalOpen(true)} className="cursor-pointer py-1 px-4 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200">
+                                        Sign In
                                     </button>
-                                    <ul className="dropdown-menu dropdown-open:opacity-100 hidden min-w-60 bg-zinc-800" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-footer">
-                                        {dropdownItem("/me", "Account Details")}
-                                        {dropdownItem("/me/history", "Connection History")}
-                                        <li className="dropdown-footer gap-2">
-                                            <button onClick={() => logOut()} disabled={loading} className="btn btn-error btn-soft btn-block">{loading ? <span className="loading" /> : "Sign Out"}</button>
-                                        </li>
-                                    </ul>
-                                </div>
-                            ) : (
-                                <button onClick={() => setModalOpen(true)} className="cursor-pointer py-1 px-4 rounded bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200">
-                                    Sign In
-                                </button>
-                            )}
+                                )}
+                            </div>
+                            <span className="icon-[tabler--point] text-zinc-600" />
+                            <span className="text-sm text-zinc-400">
+                                {currentTime}z
+                            </span>
                         </div>
                     </div>
                 </div>
