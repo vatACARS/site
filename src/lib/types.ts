@@ -20,5 +20,8 @@ interface DocsPageProps {
 }
 
 export interface VatACARSUserData {
-  name: string;
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
 }

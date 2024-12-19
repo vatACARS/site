@@ -1,251 +1,182 @@
-import { useState, useEffect } from 'react';
-import { ChevronRight, Search, Menu } from 'lucide-react';
-import { Button } from '../components/ui/button';
-import { Header, Footer } from '../components/layout/header-footer';
-import ReactMarkdown from 'react-markdown';
+import { useEffect, useState, createElement, Fragment } from 'react';
 import { GetStaticProps } from 'next';
-import { getDocContent } from '../lib/docs';
-import { useRouter } from 'next/router';
+import { getDocContent } from '@lib/docs';
 
-interface Section {
-  title: string;
-  content: string;
+import { FaBook, FaChevronRight, FaMagnifyingGlass, FaMap, FaMinus, FaPlus } from 'react-icons/fa6';
+import ReactMarkdown from 'react-markdown';
+
+interface ContentNode {
+    title: string;
+    type: 'folder' | 'file';
+    content?: string; // files
+    contents?: ContentNode[]; // folders
 }
 
-interface SubCategory {
-  title: string;
-  sections: Section[];
-}
-
-interface Category {
-  title: string;
-  subCategories: SubCategory[];
-}
-
-interface DocsPageProps {
-  categories: Category[];
+interface DocsExplorerProps {
+    structure: ContentNode[];
 }
 
 export const getStaticProps: GetStaticProps = async () => {
-  const categories = await getDocContent();
-  return { props: { categories } };
+    const structure = await getDocContent();
+    return { props: { structure } };
 };
 
-export default function DocsPage({ categories = [] }: DocsPageProps) {
-  const router = useRouter();
-  const [isNavOpen, setIsNavOpen] = useState(false);
-  const [currentCategory, setCurrentCategory] = useState(0);
-  const [currentSubCategory, setCurrentSubCategory] = useState(0);
-  const [currentSection, setCurrentSection] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState([]);
+export default ({ structure }: DocsExplorerProps) => {
+    const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+    const [searchQuery, setSearchQuery] = useState('');
+    const [results, setResults] = useState<ContentNode[]>([]);
+    const [selectedFile, setSelectedFile] = useState<ContentNode | null>(null);
+    const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
-  const selectedContent = 
-    categories[currentCategory]?.subCategories[currentSubCategory]?.sections[currentSection]?.content || '';
+    useEffect(() => {
+        if (!searchQuery) {
+            setResults([]);
+            return;
+        }
 
-  useEffect(() => {
-    const { cat, sub, sec } = router.query;
-    
-    if (cat && sub && sec) {
-      const categoryIndex = categories.findIndex(c => 
-        c.title.toLowerCase().replace(/\s+/g, '-') === cat
-      );
-      if (categoryIndex === -1) return;
+        const search = (node: ContentNode, query: string) => {
+            if (node.type === 'file') {
+                return node.title.toLowerCase().includes(query.toLowerCase());
+            }
 
-      const subCategoryIndex = categories[categoryIndex].subCategories.findIndex(s => 
-        s.title.toLowerCase().replace(/\s+/g, '-') === sub
-      );
-      if (subCategoryIndex === -1) return;
+            if (node.type === 'folder') {
+                if (node.contents) {
+                    return node.contents.some((child) => search(child, query));
+                }
+            }
 
-      const sectionIndex = categories[categoryIndex].subCategories[subCategoryIndex].sections.findIndex(s => 
-        s.title.toLowerCase().replace(/\s+/g, '-') === sec
-      );
-      if (sectionIndex === -1) return;
+            return false;
+        };
 
-      setCurrentCategory(categoryIndex);
-      setCurrentSubCategory(subCategoryIndex);
-      setCurrentSection(sectionIndex);
-    }
-  }, [router.query, categories]);
+        const filteredResults = structure.filter((node) => search(node, searchQuery));
+        setResults(filteredResults);
+    }, [searchQuery, structure]);
 
-  useEffect(() => {
-    if (searchQuery.length < 2) {
-      setSearchResults([]);
-      return;
-    }
-
-    const results = [];
-    categories.forEach((category, catIndex) => {
-      category.subCategories.forEach((subCategory, subIndex) => {
-        subCategory.sections.forEach((section, secIndex) => {
-          if (
-            section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            section.content.toLowerCase().includes(searchQuery.toLowerCase())
-          ) {
-            results.push({
-              category: catIndex,
-              subCategory: subIndex,
-              section: secIndex,
-              title: section.title,
-              categoryTitle: category.title,
-              subCategoryTitle: subCategory.title,
-              preview: section.content.substring(0, 100)
-            });
-          }
+    const toggleFolder = (folderTitle: string) => {
+        setExpandedFolders((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(folderTitle)) {
+                newSet.delete(folderTitle);
+            } else {
+                newSet.add(folderTitle);
+            }
+            return newSet;
         });
-      });
-    });
-    setSearchResults(results);
-  }, [searchQuery, categories]);
+    };
 
-  const updateURL = (catIndex: number, subIndex: number, secIndex: number) => {
-    const category = categories[catIndex].title.toLowerCase().replace(/\s+/g, '-');
-    const subCategory = categories[catIndex].subCategories[subIndex].title.toLowerCase().replace(/\s+/g, '-');
-    const section = categories[catIndex].subCategories[subIndex].sections[secIndex].title.toLowerCase().replace(/\s+/g, '-');
+    const selectFile = (file: ContentNode, path: string[]) => {
+        setSelectedFile(file);
+        setBreadcrumbs(path);
+    };
 
-    router.push({
-      pathname: '/docs',
-      query: { cat: category, sub: subCategory, sec: section }
-    }, undefined, { shallow: true });
-  };
+    const renderNode = (node: ContentNode, path: string[] = [], level = 0) => {
+        const isFolderExpanded = expandedFolders.has(node.title);
 
-  const handleNavigation = (catIndex: number, subIndex: number, secIndex: number) => {
-    setCurrentCategory(catIndex);
-    setCurrentSubCategory(subIndex);
-    setCurrentSection(secIndex);
-    updateURL(catIndex, subIndex, secIndex);
-    setIsNavOpen(false);
-  };
+        if (node.type === 'folder') {
+            return (
+                <li key={node.title} className="mb-2">
+                    <div
+                        onClick={() => toggleFolder(node.title)}
+                        className="flex items-center cursor-pointer gap-x-2 text-zinc-200 font-medium py-0.5"
+                        style={{ paddingLeft: `${level * 2}px` }}
+                    >
+                        {isFolderExpanded ? <FaMinus /> : <FaPlus />}
+                        <span>{node.title}</span>
+                    </div>
+                    {isFolderExpanded && node.contents && (
+                        <ul className="ml-4">
+                            {node.contents.map((child) => renderNode(child, [...path, node.title], level + 1))}
+                        </ul>
+                    )}
+                </li>
+            );
+        }
 
-  if (categories.length === 0) {
+        if (node.type === 'file') {
+            return (
+                <li
+                    key={node.title}
+                    className="cursor-pointer text-zinc-400 hover:text-zinc-200 flex items-center gap-x-2 py-0.5 transition-colors duration-200"
+                    style={{ paddingLeft: `${level * 2}px` }}
+                    onClick={() => selectFile(node, [...path, node.title])}
+                >
+                    <FaBook />
+                    <span>{node.title}</span>
+                </li>
+            );
+        }
+
+        return null;
+    };
+
+    function renderContent(content: string) {
+        return (
+            <div>
+                <h1 className="text-2xl text-zinc-200 font-bold">{selectedFile.title}</h1>
+                <p className="mt-2 text-zinc-400"><ReactMarkdown>{content}</ReactMarkdown></p>
+            </div>
+        )
+    }
+
     return (
-      <div className="min-h-screen bg-zinc-950">
-        <Header />
-        <div className="pt-16 flex min-h-[calc(100vh-4rem)] items-center justify-center text-zinc-400">
-          No documentation available
-        </div>
-      </div>
-    );
-  }
+        <div className="pt-8 flex">
+            <div className="grid grid-cols-7 gap-4 w-full">
+                <div className="col-span-2">
+                    <nav className="space-y-8">
+                        <ul className="vertical-scrollbar w-full h-[80vh] overflow-y-scroll top-0 text-sm leading-6">
+                            <div className="mx-4 my-2">
+                                <input
+                                    type="text"
+                                    placeholder="Search..."
+                                    className="w-full py-1 px-2 text-sm text-zinc-400 bg-zinc-800 rounded"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                            {results.length > 0 ? (
+                                <>
+                                    <li className="mb-2 text-base-content/90 text-lg font-medium flex space-x-2 items-center">
+                                        <FaMagnifyingGlass />
+                                        <span>Search Results</span>
+                                    </li>
+                                    {results.map((node) => renderNode(node))}
+                                </>
+                            ) : searchQuery.length >= 2 ? (
+                                <li className="text-base-content/90 text-lg font-medium flex space-x-2 items-center">
+                                    <FaMap />
+                                    <span>No results found</span>
+                                </li>
+                            ) : (
+                                <>
+                                    <li className="mb-2 text-base-content/90 text-xl font-medium flex space-x-2 items-center">
+                                        <FaBook />
+                                        <span>Documentation</span>
+                                    </li>
+                                    {structure.map((node) => renderNode(node))}
+                                </>
+                            )}
+                        </ul>
+                    </nav>
+                </div>
 
-  return (
-    <div className="min-h-screen bg-zinc-950">
-      <Header />
-      
-      <div className="pt-16 flex min-h-[calc(100vh-4rem)]">
-        <div className={`fixed md:relative inset-y-0 left-0 transform ${
-          isNavOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        } w-72 bg-zinc-900 border-r border-zinc-800/50 transition-transform duration-200 ease-in-out overflow-y-auto z-30`}>
-          <div className="p-6">
-            <div className="relative mb-6 group">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-zinc-400 group-focus-within:text-blue-400" />
-              <input
-                type="text"
-                placeholder="Search documentation"
-                className="w-full bg-zinc-800 border-none rounded-md pl-9 pr-12 py-2 text-sm text-zinc-100 placeholder:text-zinc-500 focus:ring-2 focus:ring-blue-500"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {searchResults.length > 0 ? (
-              <div className="mb-6 space-y-4">
-                <h3 className="text-sm font-medium text-zinc-400 px-2">Search Results</h3>
-                {searchResults.map((result, index) => (
-                  <Button
-                    key={index}
-                    variant="ghost"
-                    className="w-full justify-start text-left pl-4 text-zinc-400 hover:text-white hover:bg-zinc-800"
-                    onClick={() => handleNavigation(result.category, result.subCategory, result.section)}
-                  >
-                    <div>
-                      <div className="flex items-center gap-2 text-sm">
-                        <span className="text-blue-400">{result.title}</span>
-                      </div>
-                      <div className="text-xs text-zinc-500 mt-1">
-                        {result.categoryTitle} / {result.subCategoryTitle}
-                      </div>
-                    </div>
-                  </Button>
-                ))}
-              </div>
-            ) : searchQuery.length >= 2 ? (
-              <div className="mb-6 space-y-4">
-                <h3 className="text-sm font-medium text-zinc-400 px-2">No results found</h3>
-              </div>
-            ) : (
-              <nav className="space-y-8">
-                {categories.map((category, catIndex) => (
-                  <div key={category.title}>
-                    <h3 className="text-sm font-bold text-zinc-200 mb-2 px-2">
-                      {category.title}
-                    </h3>
-                    <div className="space-y-4 pl-2">
-                      {category.subCategories.map((subCategory, subIndex) => (
-                        <div key={subCategory.title}>
-                          <h4 className="text-sm font-medium text-zinc-400 mb-1 px-2">
-                            {subCategory.title}
-                          </h4>
-                          <div className="space-y-1">
-                            {subCategory.sections.map((section, secIndex) => (
-                              <Button
-                                key={section.title}
-                                variant="ghost"
-                                className={`w-full justify-start text-left pl-4 ${
-                                  currentCategory === catIndex &&
-                                  currentSubCategory === subIndex &&
-                                  currentSection === secIndex
-                                    ? 'bg-blue-500/10 text-blue-400'
-                                    : 'text-zinc-400 hover:text-white hover:bg-zinc-800'
-                                }`}
-                                onClick={() => handleNavigation(catIndex, subIndex, secIndex)}
-                              >
-                                <ChevronRight className="mr-2 h-4 w-4" />
-                                {section.title}
-                              </Button>
+                <div className="col-span-5 p-4">
+                    <div className="text-sm mb-4 text-zinc-400">
+                        <nav className="text-sm text-zinc-400 flex space-x-2">
+                            {breadcrumbs.map((crumb, index) => (
+                                <span className="flex space-x-2 items-center" key={index}>
+                                    {index > 0 && <FaChevronRight />}
+                                    <span>{crumb}</span>
+                                </span>
                             ))}
-                          </div>
-                        </div>
-                      ))}
+                        </nav>
                     </div>
-                  </div>
-                ))}
-              </nav>
-            )}
-          </div>
-        </div>
-
-        <div className="flex-1">
-          <header className="sticky top-0 z-20 bg-zinc-950/80 backdrop-blur-xl border-b border-zinc-800/50">
-            <div className="flex items-center h-16 px-6">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="md:hidden mr-2 text-zinc-400 hover:text-white"
-                onClick={() => setIsNavOpen(!isNavOpen)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-2 text-zinc-400 overflow-hidden">
-                <span className="truncate">{categories[currentCategory]?.title}</span>
-                <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{categories[currentCategory]?.subCategories[currentSubCategory]?.title}</span>
-                <ChevronRight className="h-4 w-4 flex-shrink-0" />
-                <span className="text-white truncate">
-                  {categories[currentCategory]?.subCategories[currentSubCategory]?.sections[currentSection]?.title}
-                </span>
-              </div>
+                    <div className="content-area">
+                        {selectedFile ? renderContent(selectedFile.content) : (
+                            <p className="text-zinc-400">Select a file to view its content.</p>
+                        )}
+                    </div>
+                </div>
             </div>
-          </header>
-
-          <main className="px-6 py-10">
-            <article className="max-w-4xl mx-auto prose prose-invert prose-headings:text-white prose-p:text-zinc-400 prose-a:text-blue-400 hover:prose-a:text-blue-300 prose-strong:text-white prose-code:text-blue-300 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800/50 prose-hr:border-zinc-800/50">
-              <ReactMarkdown>{selectedContent}</ReactMarkdown>
-            </article>
-          </main>
         </div>
-      </div>
-      <Footer />
-    </div>
-  );
-}
+    );
+};

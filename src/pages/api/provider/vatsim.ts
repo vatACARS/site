@@ -25,7 +25,6 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         body,
     }).then(async (res) => {
         let resp = await res.json();
-        console.log(resp);
         return resp;
     });
 
@@ -66,11 +65,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
 
         (session as IronSession<SessionData>).user = {
-            name: oAuthAccount.user.name
+            id: oAuthAccount.user.id,
+            username: oAuthAccount.user.username,
+            firstName: oAuthAccount.user.firstName,
+            lastName: oAuthAccount.user.lastName
         }
         await session.save();
 
-        return sendApiResponse(res, "success", `Logged in as ${oAuthAccount.user.name}`);
+        return sendApiResponse(res, "success", `Logged in as ${oAuthAccount.user.username}`);
     }
 
     // Account doesn't exist yet - prepare for link

@@ -29,6 +29,7 @@ export default () => {
             }, "/login", { shallow: true });
         }
         if(router && !router.query?.code) {
+            setStatus("Redirecting you to VATSIM...");
             setTimeout(() => router.push(OAUTH_URI), 3000);
             return;
         }
@@ -57,7 +58,7 @@ export default () => {
     }, [ router.isReady ]);
 
     return (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full gap-y-4 flex flex-col items-center justify-center">
+        <div className="my-12 gap-y-4 flex flex-col items-center justify-center">
             <img src="/img/VATSIM_Logo_No_Tagline_2000px.png"
                 alt="VATSIM Logo"
                 className="hover:opacity-80 transition-opacity w-52"

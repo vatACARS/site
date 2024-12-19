@@ -10,7 +10,9 @@ datasource db {
 
 model AcarsUser {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
+  firstName     String
+  lastName      String
+  username      String    @unique
   email         String    @unique
   password      String
 

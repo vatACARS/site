@@ -2,48 +2,37 @@ import fs from 'fs/promises';
 import path from 'path';
 
 export async function getDocContent() {
-  const docsPath = path.join(process.cwd(), 'src/pages/docs');
-  const categories = await fs.readdir(docsPath);
-  
-  const structure = await Promise.all(
-    categories
-      .filter(async cat => (await fs.stat(path.join(docsPath, cat))).isDirectory())
-      .map(async category => {
-        const categoryPath = path.join(docsPath, category);
-        const subDirs = await fs.readdir(categoryPath);
-        
-        const subCategories = await Promise.all(
-          subDirs
-            .filter(async dir => (await fs.stat(path.join(categoryPath, dir))).isDirectory())
-            .map(async subDir => {
-              const subPath = path.join(categoryPath, subDir);
-              const files = await fs.readdir(subPath);
-              
-              const sections = await Promise.all(
-                files
-                  .filter(file => file.endsWith('.md'))
-                  .map(async file => {
-                    const content = await fs.readFile(path.join(subPath, file), 'utf-8');
-                    return {
-                      title: path.basename(file, '.md').replace(/-/g, ' '),
-                      content
-                    };
-                  })
-              );
+  const docsPath = path.join(process.cwd(), 'src/docs');
 
-              return {
-                title: subDir.replace(/-/g, ' '),
-                sections
-              };
-            })
-        );
+  async function readDirectoryRecursive(dirPath: string): Promise<any> {
+    const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
-        return {
-          title: category,
-          subCategories
-        };
+    const results = await Promise.all(
+      entries.map(async (entry) => {
+        const fullPath = path.join(dirPath, entry.name);
+
+        if (entry.isDirectory()) {
+          const subContents = await readDirectoryRecursive(fullPath);
+          return {
+            title: entry.name.replace(/-/g, ' '),
+            type: 'folder',
+            contents: subContents,
+          };
+        } else if (entry.isFile() && entry.name.endsWith('.md')) {
+          const content = await fs.readFile(fullPath, 'utf-8');
+          return {
+            title: entry.name.replace(/-/g, ' ').replace(/\.md$/, ''),
+            type: 'file',
+            content,
+          };
+        }
+        return null;
       })
-  );
+    );
 
+    return results.filter(Boolean);
+  }
+
+  const structure = await readDirectoryRecursive(docsPath);
   return structure;
 }

@@ -18,7 +18,7 @@ export default function FlyonuiScript() {
       await import('flyonui/flyonui');
       window.HSStaticMethods.autoInit();
     };
-    setTimeout(() => loadFlyonui(), 2000);
+    setTimeout(() => loadFlyonui(), 1000);
   }, [path]);
 
   return null;

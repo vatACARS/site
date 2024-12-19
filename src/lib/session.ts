@@ -10,7 +10,12 @@ export const sessionOptions: SessionOptions = {
 }
 
 export interface SessionData {
-	user: VatACARSUserData;
+	user: {
+		id: string;
+		username: string;
+		firstName: string;
+		lastName: string;
+	}
 }
 
 export interface TemporarySessionData {
