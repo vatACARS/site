@@ -1,11 +1,10 @@
 import type { SessionOptions } from "iron-session";
-import type { VatACARSUserData } from "./types";
 
 export const sessionOptions: SessionOptions = {
 	password: process.env.AUTH_COOKIE_PWD as string,
 	cookieName: "session",
 	cookieOptions: {
-		secure: true
+		secure: false
 	}
 }
 

@@ -5,6 +5,7 @@ import { sendApiResponse } from "@lib/apiResponse";
 import { prisma } from "@lib/prisma";
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
+    try {
     const session = await getIronSession<SessionData | TemporarySessionData>(req, res, sessionOptions);
     if (req.method !== "POST") return sendApiResponse(res, "error", "Method not allowed.", {}, 405);
     const { code } = JSON.parse(req.body);
@@ -87,4 +88,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     await session.save();
 
     return sendApiResponse(res, "success", "Welcome to vatACARS!", { action: "accountRequired" });
+} catch (e) {
+    console.error(e);
+    return sendApiResponse(res, "error", "An error occurred while logging in.", {}, 500);
+}
 }

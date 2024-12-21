@@ -34,6 +34,11 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
         await session.save();
 
-        return sendApiResponse(res, "success", `Logged in as ${userAccount.username}`);
+        return sendApiResponse(res, "success", `Logged in as ${userAccount.username}`, {
+            id: userAccount.id,
+            username: userAccount.username,
+            firstName: userAccount.firstName,
+            lastName: userAccount.lastName
+        });
     });
 }

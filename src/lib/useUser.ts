@@ -5,18 +5,20 @@ import fetcher from "./fetcher";
 import type { VatACARSUserData } from "./types";
 
 export default function useUser({ redirectTo = "", redirectIfFound = false } = {}) {
-    const { data: user, mutate: mutateUser, isValidating } = useSWR<VatACARSUserData>("/api/session", fetcher);
+    let { data: user, mutate: mutateUser, isValidating } = useSWR<VatACARSUserData | any>("/api/session", fetcher);
 
     useEffect(() => {
-        if (!redirectTo || !user) return;
+        if(isValidating) return;
+        if (!redirectTo || user?.failed) return;
 
+        user = user as VatACARSUserData;
         if (
             (redirectTo && !redirectIfFound && !user?.username) ||
             (redirectIfFound && user?.username)
         ) {
             Router.push(redirectTo);
         }
-    }, [user, redirectIfFound, redirectTo]);
+    }, [user, isValidating]);
 
     return { user, mutateUser, isLoading: isValidating && !user };
 }
