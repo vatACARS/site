@@ -3,15 +3,16 @@ import { useRouter } from "next/router";
 const qs = require("querystring");
 
 import { VscLoading } from "react-icons/vsc"
+import { FaDiscord } from "react-icons/fa6";
 
 const OAUTH_QS = new URLSearchParams({
-    client_id: process.env.NEXT_PUBLIC_VATSIM_CLIENT_ID,
-    redirect_uri: process.env.NEXT_PUBLIC_VATSIM_OAUTH_REDIRECT_URI,
+    client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
+    redirect_uri: process.env.NEXT_PUBLIC_DISCORD_OAUTH_REDIRECT_URI,
     response_type: "code",
-    scope: ["full_name", "vatsim_details", "email"].join(" "),
+    scope: ["identify", "email", "guilds.join"].join(" "),
 }).toString();
 
-const OAUTH_URI = `https://auth.vatsim.net/oauth/authorize?${OAUTH_QS}`;
+const OAUTH_URI = `https://discord.com/oauth2/authorize?${OAUTH_QS}`;
 
 export default () => {
     const router = useRouter();
@@ -23,20 +24,20 @@ export default () => {
         if(!router.isReady) return;
         if(!router.query?.z) {
             router.replace({
-                pathname: "/auth/provider/vatsim",
+                pathname: "/auth/provider/discord",
                 query: qs.stringify({ z: true, ...router.query })
             }, "/login", { shallow: true });
         }
         if(router && !router.query?.code) {
-            setStatus("Redirecting you to VATSIM...");
+            setStatus("Redirecting you to Discord...");
             setTimeout(() => router.push(OAUTH_URI), 3000);
             return;
         }
 
         const connect = async () => {
-            setStatus("Communicating with VATSIM...");
+            setStatus("Communicating with Discord...");
 
-            const resp = await fetch("/api/provider/vatsim", {
+            const resp = await fetch("/api/provider/discord", {
                 method: "POST",
                 body: JSON.stringify({ code: router.query?.code })
             }).then(resp => resp.json());
@@ -58,10 +59,7 @@ export default () => {
 
     return (
         <div className="my-12 gap-y-4 flex flex-col items-center justify-center">
-            <img src="/img/VATSIM_Logo_No_Tagline_2000px.png"
-                alt="VATSIM Logo"
-                className="hover:opacity-80 transition-opacity w-52"
-            />
+            <FaDiscord className="text-6xl text-blue-500" />
             <h3 className="font-medium text-xl animate-pulse">{failed ? "Something went wrong!" : success ? "Identity confirmed." : "Please wait..."}</h3>
             <div className="pt-12">
                 <div className="flex space-x-4 items-center rounded bg-slate-800 py-2 px-8">
@@ -72,7 +70,7 @@ export default () => {
                 </div>
                 {failed && (
                     <div className="flex items-center justify-center">
-                        <button onClick={async () => { await router.push("/auth/provider/vatsim"); router.reload() }} className="cursor-pointer mt-12 rounded bg-blue-500 hover:bg-blue-400 text-medium transition-all duration-200 px-4 py-2">Try again</button>
+                        <button onClick={async () => { await router.push("/auth/provider/discord"); router.reload() }} className="cursor-pointer mt-12 rounded bg-blue-500 hover:bg-blue-400 text-medium transition-all duration-200 px-4 py-2">Try again</button>
                     </div>
                 )}
             </div>
