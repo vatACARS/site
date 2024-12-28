@@ -8,6 +8,13 @@ module.exports = {
     './src/**/*.{ts,tsx}',
     './node_modules/flyonui/dist/js/*.js',
 	],
+  flyonui: {
+    themes: [{
+      vatacars: {
+        primary: "rgb(59 130 246)"
+      },
+    }],
+  },
   theme: {
     container: {
       center: true,
