@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
 async function fetchAllItems() {
-      let allItems = [];
-      let hasNextPage = true;
-      let cursor = null;
+  let allItems = [];
+  let hasNextPage = true;
+  let cursor = null;
 
-      while (hasNextPage) {
-        const query = `
+  while (hasNextPage) {
+    const query = `
           query ($cursor: String) {
             organization(login: "vatACARS") {
               projectV2(number: 1) {
@@ -58,40 +58,40 @@ async function fetchAllItems() {
           }
         `;
 
-        const response = await fetch('https://api.github.com/graphql', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.GITHUB_PAT}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ 
-            query,
-            variables: { cursor } 
-          }),
-        });
+    const response = await fetch('https://api.github.com/graphql', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.GITHUB_PAT}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        query,
+        variables: { cursor }
+      }),
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data.errors) {
-          throw new Error(data.errors[0].message);
-        }
-
-        const items = data.data.organization.projectV2.items;
-        allItems = [...allItems, ...items.nodes];
-        hasNextPage = items.pageInfo.hasNextPage;
-        cursor = items.pageInfo.endCursor;
-      }
-
-      return allItems;
+    if (data.errors) {
+      throw new Error(data.errors[0].message);
     }
-    
-    export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-      try {
-        const allItems = (await fetchAllItems())
+
+    const items = data.data.organization.projectV2.items;
+    allItems = [...allItems, ...items.nodes];
+    hasNextPage = items.pageInfo.hasNextPage;
+    cursor = items.pageInfo.endCursor;
+  }
+
+  return allItems;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const allItems = (await fetchAllItems())
       .filter(item => item.content)
       .map(item => {
         const fields: { [key: string]: string } = {};
-        
+
         item.fieldValues.nodes.forEach(node => {
           if (node.field?.name) {
             const fieldName = node.field.name.toLowerCase();
@@ -100,7 +100,7 @@ async function fetchAllItems() {
         });
 
         const labels = item.content?.labels?.nodes?.map(label => label.name) || [];
-        
+
         return {
           id: item.id,
           title: item.content?.title || fields.title || '',
