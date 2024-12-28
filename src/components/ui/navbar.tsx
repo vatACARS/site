@@ -11,7 +11,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { VscClose } from "react-icons/vsc";
-//import { FaDiscord, FaGoogle } from "react-icons/fa6";
+import { FaDiscord } from "react-icons/fa6";
 
 export default () => {
     const { user, isLoading } = useUser();
@@ -121,7 +121,7 @@ export default () => {
                                     <div className="dropdown relative inline-flex text-zinc-400 hover:text-zinc-200 transition-colors duration-200 [--placement:bottom-end] [--auto-close:inside]">
                                         <button id="dropdown-footer" type="button" className="dropdown-toggle flex items-center space-x-2" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                                             <span>{user.username}</span>
-                                            <span className="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
+                                            <span className="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4 transition-all duration-200" />
                                         </button>
                                         <ul className="dropdown-menu dropdown-open:opacity-100 hidden min-w-60 bg-zinc-800" role="menu" aria-orientation="vertical" aria-labelledby="dropdown-footer">
                                             {dropdownItem("/me", "Account Details")}
@@ -208,11 +208,11 @@ export default () => {
                                     <FaGoogle className="text-xl" />
                                     <span className="text-sm">Continue with Google</span>
                                 </button>
+                                */}
                                 <button onClick={async () => { setModalOpen(false); await router.push("/auth/provider/discord"); router.reload() }} className="px-12 h-10 w-full inline-flex items-center justify-center gap-4 rounded bg-slate-700 hover:bg-slate-600 border border-transparent hover:border-slate-500 transition-all duration-200">
                                     <FaDiscord className="text-xl" />
                                     <span className="text-sm">Continue with Discord</span>
                                 </button>
-                                */}
                             </div>
                         </div>
                     </div>
