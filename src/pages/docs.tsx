@@ -1,9 +1,10 @@
-import { useEffect, useState, createElement, Fragment } from 'react';
+import { useEffect, useState } from 'react';
 import { GetStaticProps } from 'next';
 import { getDocContent } from '@lib/docs';
+import { Mdx } from '@comp/meta/mdx-components';
+import { allDocs } from "contentlayer/generated"
 
-import { FaBook, FaChevronRight, FaMagnifyingGlass, FaMap, FaMinus, FaPlus } from 'react-icons/fa6';
-import ReactMarkdown from 'react-markdown';
+import { FaBook, FaChevronRight, FaMagnifyingGlass, FaMap, FaMinus, FaPlus, FaQuestion } from 'react-icons/fa6';
 
 interface ContentNode {
     title: string;
@@ -16,6 +17,11 @@ interface DocsExplorerProps {
     structure: ContentNode[];
 }
 
+function getDocFromTitle(title: string) {
+    console.log(title);
+    return allDocs.find((doc) => doc.title.toLowerCase().startsWith(title.toLowerCase()));
+}
+
 export const getStaticProps: GetStaticProps = async () => {
     const structure = await getDocContent();
     return { props: { structure } };
@@ -25,9 +31,10 @@ export default ({ structure }: DocsExplorerProps) => {
     const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState<ContentNode[]>([]);
-    const [selectedFile, setSelectedFile] = useState<ContentNode | null>(null);
+    const [selectedFile, setSelectedFile] = useState<string | null>(null);
     const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
+    useEffect(() => console.log(allDocs), []);
     useEffect(() => {
         if (!searchQuery) {
             setResults([]);
@@ -64,12 +71,53 @@ export default ({ structure }: DocsExplorerProps) => {
         });
     };
 
-    const selectFile = (file: ContentNode, path: string[]) => {
-        setSelectedFile(file);
+    const selectFile = (fileTitle: string, path: string[]) => {
+        setSelectedFile(fileTitle);
         setBreadcrumbs(path);
     };
 
     const renderNode = (node: ContentNode, path: string[] = [], level = 0) => {
+        const isFolderExpanded = expandedFolders.has(node.title);
+
+        if (node.type === 'folder') {
+            return (
+                <>
+                    <li onClick={() => toggleFolder(node.title)} key={node.title} className="cursor-pointer">
+                        <div className="timeline-middle">
+                            <span className="bg-blue-500/20 flex size-4.5 items-center justify-center rounded-full">
+                                {isFolderExpanded ? <FaMinus /> : <FaPlus />}
+                            </span>
+                        </div>
+                        <div className="timeline-end">
+                            <span className="font-medium">{node.title}</span>
+                        </div>
+                    </li>
+                    {isFolderExpanded && node.contents && (
+                        <ul className="timeline timeline-vertical timeline-compact ml-2">
+                            {node.contents.map((child) => renderNode(child, [...path, node.title], level + 1))}
+                        </ul>
+                    )}
+                </>
+            )
+        }
+
+        if (node.type === 'file') {
+            return (
+                <li onClick={() => selectFile(node.title, [...path, node.title])} key={node.title} className="cursor-pointer">
+                    <div className="timeline-middle">
+                        <span className="bg-blue-500/20 flex size-4.5 items-center justify-center rounded-full">
+                            <FaQuestion />
+                        </span>
+                    </div>
+                    <div className="timeline-end">
+                        <span>{node.title}</span>
+                    </div>
+                </li>
+            )
+        }
+    }
+
+    const renderNodeOld = (node: ContentNode, path: string[] = [], level = 0) => {
         const isFolderExpanded = expandedFolders.has(node.title);
 
         if (node.type === 'folder') {
@@ -98,7 +146,7 @@ export default ({ structure }: DocsExplorerProps) => {
                     key={node.title}
                     className="cursor-pointer text-zinc-400 hover:text-zinc-200 flex items-center gap-x-2 py-0.5 transition-colors duration-200"
                     style={{ paddingLeft: `${level * 2}px` }}
-                    onClick={() => selectFile(node, [...path, node.title])}
+                    onClick={() => selectFile(node.title, [...path, node.title])}
                 >
                     <FaBook />
                     <span>{node.title}</span>
@@ -109,11 +157,11 @@ export default ({ structure }: DocsExplorerProps) => {
         return null;
     };
 
-    function renderContent(content: string) {
+    function renderContent(title: string) {
         return (
             <div>
-                <h1 className="text-2xl text-zinc-200 font-bold">{selectedFile.title}</h1>
-                <p className="mt-2 text-zinc-400"><ReactMarkdown>{content}</ReactMarkdown></p>
+                <h1 className="text-2xl text-zinc-200 font-bold">{selectedFile}</h1>
+                <p className="mt-2 text-zinc-400"><Mdx code={getDocFromTitle(title).body.code} /></p>
             </div>
         )
     }
@@ -124,6 +172,9 @@ export default ({ structure }: DocsExplorerProps) => {
                 <div className="col-span-2">
                     <nav className="space-y-8">
                         <ul className="vertical-scrollbar w-full h-[80vh] overflow-y-scroll top-0 text-sm leading-6">
+                            <li className="mb-2 text-base-content/90 text-2xl font-medium text-center">
+                                <span>vatACARS Docs</span>
+                            </li>
                             <div className="mx-4 my-2">
                                 <input
                                     type="text"
@@ -135,24 +186,24 @@ export default ({ structure }: DocsExplorerProps) => {
                             </div>
                             {results.length > 0 ? (
                                 <>
-                                    <li className="mb-2 text-base-content/90 text-lg font-medium flex space-x-2 items-center">
+                                    <li className="pt-2 text-base-content/90 text-sm font-medium flex space-x-2 items-center justify-center">
                                         <FaMagnifyingGlass />
                                         <span>Search Results</span>
                                     </li>
-                                    {results.map((node) => renderNode(node))}
+                                    <ul className="timeline timeline-vertical timeline-compact">
+                                        {results.map((node) => renderNode(node))}
+                                    </ul>
                                 </>
                             ) : searchQuery.length >= 2 ? (
-                                <li className="text-base-content/90 text-lg font-medium flex space-x-2 items-center">
+                                <li className="pt-2 text-base-content/90 text-sm font-medium flex space-x-2 items-center justify-center">
                                     <FaMap />
                                     <span>No results found</span>
                                 </li>
                             ) : (
                                 <>
-                                    <li className="mb-2 text-base-content/90 text-xl font-medium flex space-x-2 items-center">
-                                        <FaBook />
-                                        <span>Documentation</span>
-                                    </li>
-                                    {structure.map((node) => renderNode(node))}
+                                    <ul className="timeline timeline-vertical timeline-compact">
+                                        {structure.map((node) => renderNode(node))}
+                                    </ul>
                                 </>
                             )}
                         </ul>
@@ -171,7 +222,7 @@ export default ({ structure }: DocsExplorerProps) => {
                         </nav>
                     </div>
                     <div className="content-area">
-                        {selectedFile ? renderContent(selectedFile.content) : (
+                        {selectedFile ? renderContent(selectedFile) : (
                             <p className="text-zinc-400">Select a file to view its content.</p>
                         )}
                     </div>
