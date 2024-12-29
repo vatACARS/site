@@ -38,7 +38,8 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
             id: userAccount.id,
             username: userAccount.username,
             firstName: userAccount.firstName,
-            lastName: userAccount.lastName
+            lastName: userAccount.lastName,
+            apiToken: userAccount.apiToken
         });
     });
 }
