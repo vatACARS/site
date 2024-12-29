@@ -1,6 +1,7 @@
 import { type AppProps } from 'next/app'
 import { CookieConsent } from '../components/ui/CookieConsent'
 import '../styles/globals.css'
+import '../styles/mdx.css'
 
 import ConsumerLayout from '@comp/layout/ConsumerLayout'
 import { GoogleOAuthProvider } from '@react-oauth/google'
