@@ -1,0 +1,59 @@
+---
+title: Welcome
+---
+
+This is the documentation for vatACARS and it's services.
+
+<Callout>
+This site is a work in progress. If you see dummy text on a page, it means we're still working on it. Thank you for your patience.
+</Callout>
+
+## Gateways
+
+Select a feature below to learn more about it.
+
+<div className="grid sm:grid-cols-2 gap-4 mt-6">
+<Card href="/docs/documentation">
+### Base Gateway
+
+Connecting to the vatACARS websocket server.
+</Card>
+
+<Card href="/docs/marketing" disabled>
+### Authentication Gateway
+
+Authenticating the user with vatACARS services.
+</Card>
+
+<Card href="/docs/app" disabled>
+### Identity Gateway
+
+Register as a station to begin sending and receiving messages.
+</Card>
+
+<Card href="/docs/blog" disabled>
+### Message Gateway
+
+Send and receive Telex and CPDLC messages.
+</Card>
+</div>
+
+### Test Code
+
+```ts showLineNumbers title="next.config.js" {3}
+import { withContentlayer } from "next-contentlayer"
+
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  reactStrictMode: true,
+  images: {
+    domains: ["avatars.githubusercontent.com"],
+  },
+  experimental: {
+    appDir: true,
+    serverComponentsExternalPackages: ["@prisma/client"],
+  },
+}
+
+export default withContentlayer(nextConfig)
+```
