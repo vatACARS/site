@@ -8,7 +8,6 @@ interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function MdxCard({
-    href,
     className,
     children,
     disabled,
@@ -17,22 +16,17 @@ export function MdxCard({
     return (
         <div
             className={cn(
-                "group relative rounded-lg border p-6 shadow-md transition-shadow hover:shadow-lg",
+                "group relative rounded-lg border p-6 shadow-md transition-all duration-200 hover:border-blue-400 hover:bg-zinc-800/20",
                 disabled && "cursor-not-allowed opacity-60",
                 className
             )}
             {...props}
         >
             <div className="flex flex-col justify-between space-y-4">
-                <div className="space-y-2 [&>h3]:!mt-0 [&>h4]:!mt-0 [&>p]:text-muted-foreground">
+                <div className="space-y-2 [&>h3]:!mt-0 [&>h4]:!mt-0 [&>p]:text-zinc-600 hover:text-zinc-200 transition-all">
                     {children}
                 </div>
             </div>
-            {href && (
-                <Link href={disabled ? "#" : href} className="absolute inset-0">
-                    <span className="sr-only">View</span>
-                </Link>
-            )}
         </div>
     )
 }
