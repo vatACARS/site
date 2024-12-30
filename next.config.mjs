@@ -1,12 +1,10 @@
 import nextMDX from "@next/mdx";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
-import moonlightTheme from "./assets/moonlight-ii.json" with { type: 'json' };
 
 /** @type {import('rehype-pretty-code').Options} */
 const options = {
-    theme: moonlightTheme,
-    keepBackground: false,
+    keepBackground: false
 };
 
 const plugins = [];
