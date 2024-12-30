@@ -53,11 +53,14 @@ export default () => {
                             <span className="font-medium text-xs text-zinc-600">Real world aviation use is prohibited.</span>
                         </div>
                         <div className="flex gap-6 text-sm">
-                            <Link href="/terms">
-                                <span className="font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200">Terms</span>
+                            <Link href="/legal/attribution">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Open Source Attributions</span>
                             </Link>
-                            <Link href="/privacy">
-                                <span className="font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200">Privacy</span>
+                            <Link href="/legal/terms">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Terms</span>
+                            </Link>
+                            <Link href="/legal/privacy">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Privacy</span>
                             </Link>
                         </div>
                     </div>
