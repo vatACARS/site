@@ -2,58 +2,58 @@
 title: Welcome
 ---
 
-This is the documentation for vatACARS and it's services.
+Welcome to vatACARS!
 
-<Callout>
-This site is a work in progress. If you see dummy text on a page, it means we're still working on it. Thank you for your patience.
-</Callout>
-
-## Gateways
-
-Select a feature below to learn more about it.
-
-<div className="grid sm:grid-cols-2 gap-4 mt-6">
-<Card href="/docs/documentation">
-### Base Gateway
-
-Connecting to the vatACARS websocket server.
-</Card>
-
-<Card href="/docs/marketing" disabled>
-### Authentication Gateway
-
-Authenticating the user with vatACARS services.
-</Card>
-
-<Card href="/docs/app" disabled>
-### Identity Gateway
-
-Register as a station to begin sending and receiving messages.
-</Card>
-
-<Card href="/docs/blog" disabled>
-### Message Gateway
-
-Send and receive Telex and CPDLC messages.
-</Card>
+<div className="pt-4 flex justify-center">
+  <img className="h-32" src="img/vatacars-logo-dark.png" />
 </div>
 
-### Test Code
+vatACARS adds a new layer of realism to virtual flying by bringing ACARS functionality to vatsys and your favorite flight simulators. With vatACARS, you can simulate real-world data exchanges and communication, making your flights feel more authentic. It’s the perfect tool for anyone looking to take their flight simulation experience to the next level.
 
-```ts showLineNumbers title="next.config.js" {3}
-import { withContentlayer } from "next-contentlayer"
+<Callout type="warning">
+This documentation is a work in progress. Thank you for your patience!
+</Callout>
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    domains: ["avatars.githubusercontent.com"],
-  },
-  experimental: {
-    appDir: true,
-    serverComponentsExternalPackages: ["@prisma/client"],
-  },
-}
+## For Air Traffic Controllers
 
-export default withContentlayer(nextConfig)
-```
+Check out our <SelectFile fileTitle="Plugin Setup" filePath={["Plugin"]}>Plugin Setup</SelectFile> page to get started.
+
+## For Developers
+
+To jump directly in, check out our <SelectFile fileTitle="Gateway Communication Flow" filePath={["For Developers"]}>Gateway Communication Flow</SelectFile> page.
+
+<div className="grid sm:grid-cols-2 gap-4 mt-6">
+
+<SelectFile fileTitle="Authentication Gateway" filePath={["For Developers", "Authentication Gateway"]} underline={false}>
+  <Card>
+    ### Authentication Gateway
+
+    Authenticate yourself with the vatACARS gateway server.
+  </Card>
+</SelectFile>
+
+<SelectFile fileTitle="Identity Gateway" filePath={["For Developers", "Identity Gateway"]} underline={false}>
+  <Card>
+    ### Identity Gateway
+
+    Register as a station to begin sending and receiving messages.
+  </Card>
+</SelectFile>
+
+<SelectFile fileTitle="CPDLC Gateway" filePath={["For Developers", "CPDLC Gateway"]} underline={false}>
+  <Card>
+    ### Message Gateway
+
+    Send and receive CPDLC messages.
+  </Card>
+</SelectFile>
+
+<SelectFile fileTitle="Telex Gateway" filePath={["For Developers", "Telex Gateway"]} underline={false}>
+  <Card>
+    ### Telex Gateway
+
+    Send and receive telex messages.
+  </Card>
+</SelectFile>
+
+</div>
