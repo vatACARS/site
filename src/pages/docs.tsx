@@ -4,7 +4,7 @@ import { getDocContent } from '@lib/docs';
 import { Mdx } from '@comp/meta/mdx-components';
 import { allDocs } from "contentlayer/generated"
 
-import { FaBook, FaChevronRight, FaMagnifyingGlass, FaMap, FaMinus, FaPlus, FaQuestion } from 'react-icons/fa6';
+import { FaChevronDown, FaChevronRight, FaMagnifyingGlass, FaMap, FaMinus, FaPlus, FaQuestion } from 'react-icons/fa6';
 
 interface ContentNode {
     title: string;
@@ -31,10 +31,10 @@ export default ({ structure }: DocsExplorerProps) => {
     const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
     const [searchQuery, setSearchQuery] = useState('');
     const [results, setResults] = useState<ContentNode[]>([]);
-    const [selectedFile, setSelectedFile] = useState<string | null>(null);
+    const [selectedFile, setSelectedFile] = useState<string | null>();
     const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
-    useEffect(() => console.log(allDocs), []);
+    useEffect(() => selectFile("Welcome", []), []);
     useEffect(() => {
         if (!searchQuery) {
             setResults([]);
@@ -71,18 +71,50 @@ export default ({ structure }: DocsExplorerProps) => {
         });
     };
 
+    useEffect(() => {
+        const loadFlyonui = async () => {
+            await import('flyonui/flyonui');
+            window.HSStaticMethods.autoInit();
+        };
+        setTimeout(() => loadFlyonui(), 500);
+    }, [ selectedFile ]);
+
     const selectFile = (fileTitle: string, path: string[]) => {
         setSelectedFile(fileTitle);
         setBreadcrumbs(path);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        setExpandedFolders((prev) => {
+            const newSet = new Set(prev);
+            path.forEach((folder) => newSet.add(folder));
+            return newSet;
+        });
     };
 
     const renderNode = (node: ContentNode, path: string[] = [], level = 0) => {
         const isFolderExpanded = expandedFolders.has(node.title);
+        const isSelected = selectedFile === node.title;
+
+        const containsSelectedFile = (node: ContentNode): boolean => {
+            if (node.type === 'file') {
+                return node.title === selectedFile;
+            }
+            if (node.type === 'folder' && node.contents) {
+                return node.contents.some(containsSelectedFile);
+            }
+            return false;
+        };
+
+        const isChildSelected = node.type === 'folder' && containsSelectedFile(node);
 
         if (node.type === 'folder') {
             return (
                 <>
-                    <li onClick={() => toggleFolder(node.title)} key={node.title} className="cursor-pointer">
+                    <li
+                        onClick={() => toggleFolder(node.title)}
+                        key={node.title}
+                        className={`cursor-pointer ${isChildSelected ? 'text-blue-400' : 'text-zinc-400'}`}
+                    >
                         <div className="timeline-middle">
                             <span className="bg-blue-500/20 flex size-4.5 items-center justify-center rounded-full">
                                 {isFolderExpanded ? <FaMinus /> : <FaPlus />}
@@ -98,70 +130,32 @@ export default ({ structure }: DocsExplorerProps) => {
                         </ul>
                     )}
                 </>
-            )
-        }
-
-        if (node.type === 'file') {
-            return (
-                <li onClick={() => selectFile(node.title, [...path, node.title])} key={node.title} className="cursor-pointer">
-                    <div className="timeline-middle">
-                        <span className="bg-blue-500/20 flex size-4.5 items-center justify-center rounded-full">
-                            <FaQuestion />
-                        </span>
-                    </div>
-                    <div className="timeline-end">
-                        <span>{node.title}</span>
-                    </div>
-                </li>
-            )
-        }
-    }
-
-    const renderNodeOld = (node: ContentNode, path: string[] = [], level = 0) => {
-        const isFolderExpanded = expandedFolders.has(node.title);
-
-        if (node.type === 'folder') {
-            return (
-                <li key={node.title} className="mb-2">
-                    <div
-                        onClick={() => toggleFolder(node.title)}
-                        className="flex items-center cursor-pointer gap-x-2 text-zinc-200 font-medium py-0.5"
-                        style={{ paddingLeft: `${level * 2}px` }}
-                    >
-                        {isFolderExpanded ? <FaMinus /> : <FaPlus />}
-                        <span>{node.title}</span>
-                    </div>
-                    {isFolderExpanded && node.contents && (
-                        <ul className="ml-4">
-                            {node.contents.map((child) => renderNode(child, [...path, node.title], level + 1))}
-                        </ul>
-                    )}
-                </li>
             );
         }
 
         if (node.type === 'file') {
             return (
                 <li
+                    onClick={() => selectFile(node.title, path)}
                     key={node.title}
-                    className="cursor-pointer text-zinc-400 hover:text-zinc-200 flex items-center gap-x-2 py-0.5 transition-colors duration-200"
-                    style={{ paddingLeft: `${level * 2}px` }}
-                    onClick={() => selectFile(node.title, [...path, node.title])}
+                    className={`cursor-pointer ${isSelected ? 'text-blue-400' : 'text-zinc-400'}`}
                 >
-                    <FaBook />
-                    <span>{node.title}</span>
+                    <div className="timeline-middle">
+                        <FaChevronRight />
+                    </div>
+                    <div className="timeline-end">
+                        <span>{node.title}</span>
+                    </div>
                 </li>
             );
         }
-
-        return null;
     };
 
     function renderContent(title: string) {
         return (
             <div>
-                <h1 className="text-2xl text-zinc-200 font-bold">{selectedFile}</h1>
-                <p className="mt-2 text-zinc-400"><Mdx code={getDocFromTitle(title).body.code} /></p>
+                <h1 className="text-5xl text-zinc-200 font-medium">{selectedFile}</h1>
+                <p className="mt-2 text-zinc-400"><Mdx code={getDocFromTitle(title).body.code} selectFile={selectFile} /></p>
             </div>
         )
     }
@@ -213,10 +207,11 @@ export default ({ structure }: DocsExplorerProps) => {
                 <div className="col-span-5 p-4">
                     <div className="text-sm mb-4 text-zinc-400">
                         <nav className="text-sm text-zinc-400 flex space-x-2">
-                            {breadcrumbs.map((crumb, index) => (
+                            {breadcrumbs.length > 0 && breadcrumbs.map((crumb, index) => (
                                 <span className="flex space-x-2 items-center" key={index}>
                                     {index > 0 && <FaChevronRight />}
                                     <span>{crumb}</span>
+                                    {index === breadcrumbs.length - 1 && <FaChevronDown />}
                                 </span>
                             ))}
                         </nav>

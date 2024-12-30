@@ -6,7 +6,6 @@ export async function getDocContent() {
 
   async function readDirectoryRecursive(
     dirPath: string,
-    isRoot: boolean = false
   ): Promise<any> {
     const entries = await fs.readdir(dirPath, { withFileTypes: true });
 
@@ -33,21 +32,17 @@ export async function getDocContent() {
       })
     );
 
-    // Filter out null results
     const filteredResults = results.filter(Boolean);
 
-    // If root, sort files above folders
-    if (isRoot) {
-      filteredResults.sort((a, b) => {
-        if (a.type === 'file' && b.type === 'folder') return -1;
-        if (a.type === 'folder' && b.type === 'file') return 1;
-        return 0;
-      });
-    }
+    filteredResults.sort((a, b) => {
+      if (a.type === 'file' && b.type === 'folder') return -1;
+      if (a.type === 'folder' && b.type === 'file') return 1;
+      return 0;
+    });
 
     return filteredResults;
   }
 
-  const structure = await readDirectoryRecursive(docsPath, true); // Pass true for the root directory
+  const structure = await readDirectoryRecursive(docsPath);
   return structure;
 }
