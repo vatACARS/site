@@ -63,7 +63,7 @@ const components = {
     ),
     a: ({ className, ...props }) => (
         <a
-            className={cn("font-medium underline underline-offset-4", className)}
+            className={cn("font-medium text-blue-400 link link-animated", className)}
             {...props}
         />
     ),
@@ -147,21 +147,74 @@ const components = {
             {...props}
         />
     ),
+    inlineCode: ({ className, ...props }) => (
+        <code
+            className={cn("rounded border px-1 font-mono text-sm", className)}
+            {...props}
+        />
+    ),
+
+    Tabs: ({ className, children, ...props }) => (
+        <nav
+            className={cn("tabs tabs-bordered mt-4", className)}
+            aria-label="Tabs"
+            role="tablist"
+            aria-orientation="horizontal"
+            {...props}
+        >
+            {children}
+        </nav>
+    ),
+    Tab: ({ id, isActive, className, tabContentId, onClick, ...props }) => (
+        <button
+            type="button"
+            className={cn(
+                "tab active-tab:tab-active min-w-[6rem]",
+                isActive ? "active" : "",
+                className
+            )}
+            id={id}
+            data-tab={`#${tabContentId}`}
+            aria-controls={tabContentId}
+            role="tab"
+            aria-selected={isActive ? "true" : "false"}
+            onClick={onClick}
+            {...props}
+        />
+    ),
+    TabPanel: ({ id, isActive, className, labelledById, ...props }) => (
+        <div
+            id={id}
+            className={cn(isActive ? "" : "hidden", className)}
+            role="tabpanel"
+            aria-labelledby={labelledById}
+            {...props}
+        />
+    ),
+
     Image,
     Callout,
     Card: MdxCard,
 }
 
 interface MdxProps {
-    code: string
+    code: string;
+    selectFile: (fileTitle: string, path: string[]) => void;
 }
 
-export function Mdx({ code }: MdxProps) {
+export function Mdx({ code, selectFile }: MdxProps) {
     const Component = useMDXComponent(code)
 
     return (
         <div className="mdx">
-            <Component components={components} />
+            <Component components={{
+                ...components,
+                SelectFile: ({ fileTitle, filePath, children, underline = true }) => (
+                    <span className={`cursor-pointer ${underline ? "link link-animated font-semibold text-blue-400" : ""}`} onClick={() => selectFile(fileTitle, filePath)}>
+                        {children}
+                    </span>
+                ),
+            }} />
         </div>
     )
 }
