@@ -112,7 +112,7 @@ export default () => {
                                                     <FaSatellite />
                                                 </div>
                                             ) : <span className="w-6 h-6 bg-zinc-700 rounded-full flex items-center justify-center">?</span>}
-                                            <span className="text-zinc-400 font-medium">{account.providerId}</span>
+                                            <span className="text-zinc-400 font-medium">{account.provider === "hoppies" ? "Hoppies" : account.providerId}</span>
                                         </div>
                                         <span className="text-zinc-500 text-sm">Linked: {new Date(account.updatedAt).toLocaleDateString()}</span>
                                         <div className="flex space-x-2 items-center py-1">
