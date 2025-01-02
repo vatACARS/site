@@ -74,7 +74,7 @@ export default () => {
         }
 
         setStatus(resp.message);
-        setTimeout(() => router.push("/account"), 3000);
+        setTimeout(() => router.push("/me"), 3000);
     }
 
     return (
