@@ -17,11 +17,6 @@ interface DocsExplorerProps {
     structure: ContentNode[];
 }
 
-function getDocFromTitle(title: string) {
-    console.log(title);
-    return allDocs.find((doc) => doc.title.toLowerCase().startsWith(title.toLowerCase()));
-}
-
 export const getStaticProps: GetStaticProps = async () => {
     const structure = await getDocContent();
     return { props: { structure } };
@@ -33,6 +28,10 @@ export default ({ structure }: DocsExplorerProps) => {
     const [results, setResults] = useState<ContentNode[]>([]);
     const [selectedFile, setSelectedFile] = useState<string | null>();
     const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
+
+    function getDocFromTitle(title: string) {
+        return allDocs.find((doc) => doc.title.toLowerCase().startsWith(title.toLowerCase()));
+    }
 
     useEffect(() => selectFile("Welcome", []), []);
     useEffect(() => {
@@ -155,7 +154,10 @@ export default ({ structure }: DocsExplorerProps) => {
         return (
             <div>
                 <h1 className="text-5xl text-zinc-200 font-medium">{selectedFile}</h1>
-                <p className="mt-2 text-zinc-400"><Mdx code={getDocFromTitle(title).body.code} selectFile={selectFile} /></p>
+                <div className="mt-2 text-zinc-400">
+                    <p className="text-sm uppercase text-red-400">Documentation rendering has been temporarily disabled.</p>
+                    {/*<Mdx code={getDocFromTitle(title).body.code} selectFile={selectFile} />*/}
+                </div>
             </div>
         )
     }
