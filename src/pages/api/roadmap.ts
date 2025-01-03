@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { withRatelimitMiddleware } from '@lib/ratelimitMiddleware';
+
 async function fetchAllItems() {
   let allItems = [];
   let hasNextPage = true;
@@ -85,7 +87,7 @@ async function fetchAllItems() {
   return allItems;
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const allItems = (await fetchAllItems())
       .filter(item => item.content)
@@ -130,3 +132,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: 'Failed to fetch project data' });
   }
 }
+
+export default withRatelimitMiddleware(handler);

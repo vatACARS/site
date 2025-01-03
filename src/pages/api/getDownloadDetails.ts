@@ -1,6 +1,8 @@
 import { sendApiResponse } from '@lib/apiResponse';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+import { withRatelimitMiddleware } from '@lib/ratelimitMiddleware';
+
 async function fetchReleases() {
     const url = 'https://api.github.com/repos/vatACARS/hub/releases';
 
@@ -33,7 +35,7 @@ async function fetchReleases() {
     }));
 }
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const releases = await fetchReleases();
         return sendApiResponse(res, "success", "", { releases });
@@ -41,3 +43,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return sendApiResponse(res, "error", "Internal Server Error", {}, 500);
     }
 }
+
+export default withRatelimitMiddleware(handler);

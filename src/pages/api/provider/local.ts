@@ -5,7 +5,9 @@ import { sendApiResponse } from "@lib/apiResponse";
 import { prisma } from "@lib/prisma";
 import bcrypt from "bcrypt";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+import { withRatelimitMiddleware } from "@lib/ratelimitMiddleware";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
     if (req.method !== "POST") return sendApiResponse(res, "error", "Method not allowed.", {}, 405);
     const { email, password } = JSON.parse(req.body);
@@ -43,3 +45,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         });
     });
 }
+
+export default withRatelimitMiddleware(handler);

@@ -3,9 +3,11 @@ import { sessionOptions, TemporarySessionData } from "@lib/session";
 import { NextApiRequest, NextApiResponse } from "next";
 
 const cache: { [key: string]: { data: any; expires: number } } = {};
-const CACHE_TTL = 60 * 1000; // 1 minute
+const CACHE_TTL = 60 * 1000;
 
-export default async function userRoute(req: NextApiRequest, res: NextApiResponse) {
+import { withRatelimitMiddleware } from "@lib/ratelimitMiddleware";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 	const session = await getIronSession<TemporarySessionData>(req, res, sessionOptions);
 	
 	if(session.oauth) {
@@ -41,3 +43,5 @@ export default async function userRoute(req: NextApiRequest, res: NextApiRespons
 		} else return res.json({});
 	} else return res.json({});
 }
+
+export default withRatelimitMiddleware(handler);

@@ -4,7 +4,9 @@ import { SessionData, sessionOptions } from "@lib/session";
 import { sendApiResponse } from "@lib/apiResponse";
 import { prisma } from "@lib/prisma";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+import { withRatelimitMiddleware } from "@lib/ratelimitMiddleware";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== "POST") return sendApiResponse(res, "error", "Method not allowed.", {}, 405);
     const session = await getIronSession<SessionData>(req, res, sessionOptions);
     if (!session || !session.user) return sendApiResponse(res, "error", "You must be logged in to link your Hoppies account.", {}, 401);
@@ -54,3 +56,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 
     return sendApiResponse(res, "success", "Hoppies account linked successfully.");
 }
+
+export default withRatelimitMiddleware(handler);

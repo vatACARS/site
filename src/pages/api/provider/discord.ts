@@ -4,7 +4,9 @@ import { SessionData, TemporarySessionData, sessionOptions } from "@lib/session"
 import { sendApiResponse } from "@lib/apiResponse";
 import { prisma } from "@lib/prisma";
 
-export default async (req: NextApiRequest, res: NextApiResponse) => {
+import { withRatelimitMiddleware } from "@lib/ratelimitMiddleware";
+
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const session = await getIronSession<SessionData | TemporarySessionData>(req, res, sessionOptions);
         if (req.method !== "POST") return sendApiResponse(res, "error", "Method not allowed.", {}, 405);
@@ -109,3 +111,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         return sendApiResponse(res, "error", "An error occurred while logging in.", {}, 500);
     }
 }
+
+export default withRatelimitMiddleware(handler);
