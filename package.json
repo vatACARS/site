@@ -21,6 +21,8 @@
         "@radix-ui/react-slot": "^1.1.0",
         "@react-oauth/google": "^0.12.1",
         "@tailwindcss/typography": "^0.5.2",
+        "@xyflow/react": "^12.3.6",
+        "add": "^2.0.6",
         "bcrypt": "^5.1.1",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
@@ -50,10 +52,11 @@
         "sharp": "^0.33.3",
         "shiki": "^1.24.4",
         "styled-components": "^5.3.3",
-        "swr": "^2.2.5",
+        "swr": "^2.3.0",
         "tailwind-merge": "^2.5.5",
         "tailwindcss-animate": "^1.0.7",
         "tm-themes": "^1.9.6",
+        "yarn": "^1.22.22",
         "yup": "^1.6.1"
     },
     "devDependencies": {
