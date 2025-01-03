@@ -8,9 +8,8 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { fromLonLat } from 'ol/proj';
 import { defaults as defaultControls } from 'ol/control';
 
-const fetcher = (url) => fetch(url, {headers: { "Content-Type": "application/json" }}).then((res) => res.json());
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
-import FirBoundaries from '@public/data/firboundaries.json';
 import VectorSource from 'ol/source/Vector';
 import VectorLayer from 'ol/layer/Vector';
 import Style from 'ol/style/Style';
@@ -20,14 +19,28 @@ import Stroke from 'ol/style/Stroke';
 export default ({ className }) => {
     const mapRef = useRef(null);
     const [map, setMap] = useState(null);
-    const [firBoundaries, setFirBoundaries] = useState(null);
+    const [firData, setFirData] = useState(null);
+
+    const [firFeatures, setFirFeatures] = useState(null);
+    const [ready, setReady] = useState(false);
 
     useEffect(() => {
-        if(!map) {
+        if(!ready) return;
+
+        updateMap();
+    }, []);
+
+    useEffect(() => {
+        if (firData) {
             initializeMap();
-        } else {
-            updateMap();
+            setReady(true);
         }
+    }, [ firData ]);
+
+    useEffect(() => {
+        fetcher('/api/thirdparty/getFirData').then((FirBoundaries) => {
+            setFirData(FirBoundaries);
+        });
     }, []);
 
     const initializeMap = () => {
@@ -54,7 +67,7 @@ export default ({ className }) => {
 
         const firFeatures = [];
 
-        for(const feature of FirBoundaries.features) {
+        for(const feature of firData.features) {
             const geometry = new GeoJSON().readGeometry(feature.geometry);
             geometry.transform('EPSG:4326', 'EPSG:3857');
             const polyFeature = new Feature({
@@ -64,10 +77,10 @@ export default ({ className }) => {
 
             polyFeature.setStyle(new Style({
                 fill: new Fill({
-                    color: 'rgba(0, 0, 0, 0.1)'
+                    color: 'rgba(0, 0, 0, 0.005)'
                 }),
                 stroke: new Stroke({
-                    color: 'rgba(255, 255, 255, 0.1)',
+                    color: 'rgba(255, 255, 255, 0.01)',
                     width: 1
                 })
             }));
@@ -78,7 +91,7 @@ export default ({ className }) => {
         boundariesLayer.getSource().addFeatures(firFeatures);
 
         setMap(initialMap);
-        setFirBoundaries(boundariesLayer);
+        setFirFeatures(boundariesLayer);
     }
 
     const updateMap = () => {
