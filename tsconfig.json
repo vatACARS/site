@@ -31,6 +31,9 @@
             "@lib/*": [
                 "./src/lib/*"
             ],
+            "@public/*": [
+                "./public/*"
+            ],
             "contentlayer/generated": [
                 "./.contentlayer/generated"
             ],
