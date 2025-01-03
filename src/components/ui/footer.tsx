@@ -49,7 +49,7 @@ export default () => {
                     {/* Bottom Bar */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-zinc-800/50">
                         <div className="flex-col">
-                            <p className="text-sm text-zinc-500">&copy; {new Date().getFullYear()} vatACARS Team. All rights reserved.</p>
+                            <p className="text-sm text-zinc-500">&copy; {new Date().getFullYear()} vatACARS Team</p>
                             <span className="font-medium text-xs text-zinc-600">Real world aviation use is prohibited.</span>
                         </div>
                         <div className="flex gap-6 text-sm">
