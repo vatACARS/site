@@ -30,24 +30,28 @@ export default () => {
                     </p>
                     <div className="h-8" />
                     <div className="grid grid-cols-2 gap-4 pt-8 border-t border-zinc-800 text-center">
-                        <div className="flex flex-col space-y-4">
-                            <p className="font-semibold text-zinc-400">For Users</p>
-                            <Link href="/download" className="flex flex-col">
-                                    <button className="mx-4 btn btn-outline btn-primary border-dashed">
-                                        <span>Downloads</span>
-                                        <MdFileDownload className="text-xl" />
-                                    </button>
-                            </Link>
-                        </div>
-                        <div className="flex flex-col space-y-4">
-                            <p className="font-semibold text-zinc-400">For Developers</p>
-                            <Link href="/docs" className="flex flex-col">
-                                    <button className="mx-4 btn btn-outline hover:btn-success border-dashed">
+                        <Link href="/download" className="flex flex-col">
+                            <button className="rounded-lg mx-4 border px-6 py-2 border-dashed border-blue-400 text-blue-400 hover:border-solid hover:border-blue-500 hover:text-blue-500 duration-200">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col items-start">
+                                        <span className="font-semibold">Download</span>
+                                        <span className="text-sm text-zinc-300/60">For Users</span>
+                                    </div>
+                                    <MdFileDownload className="text-2xl" />
+                                </div>
+                            </button>
+                        </Link>
+                        <Link href="/docs" className="flex flex-col">
+                            <button className="rounded-lg mx-4 border px-6 py-2 border-dashed hover:border-green-400 hover:border-solid hover:text-green-400 duration-200">
+                                <div className="flex justify-between items-center">
+                                    <div className="flex flex-col items-start">
                                         <span>Documentation</span>
-                                        <MdMenuBook className="text-xl" />
-                                    </button>
-                            </Link>
-                        </div>
+                                        <span className="text-sm font-semibold text-zinc-300/60">For Developers</span>
+                                    </div>
+                                    <MdMenuBook className="text-2xl" />
+                                </div>
+                            </button>
+                        </Link>
                     </div>
                 </div>
                 <div>
