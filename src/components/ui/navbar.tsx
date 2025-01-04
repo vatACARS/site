@@ -116,7 +116,7 @@ export default () => {
                         <div className="flex items-center gap-4">
                             <div className="hidden md:flex items-center gap-4">
                                 {isLoading ? (
-                                    <span className="loading loading-lg" />
+                                    <span className="loading loading-infinity" />
                                 ) : user.username ? (
                                     <div className="dropdown relative inline-flex text-zinc-400 hover:text-zinc-200 transition-colors duration-200 [--placement:bottom-end] [--auto-close:inside]">
                                         <button id="dropdown-footer" type="button" className="dropdown-toggle flex items-center space-x-2" aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
