@@ -50,9 +50,10 @@ export default () => {
         <div className="mx-auto p-4">
             <h1 className="text-2xl font-bold mb-6">Latest Releases</h1>
             <div className="max-w-2xl mx-auto">
-                {releases.map((release) => (
+                <p className="text-red-400 uppercase">This service has been disabled.</p>
+                {/*releases.map((release) => (
                     <ReleaseCard key={release.id} release={release} />
-                ))}
+                ))*/}
             </div>
         </div>
     );
