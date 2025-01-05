@@ -19,7 +19,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             grant_type: "authorization_code",
             redirect_uri: process.env.NEXT_PUBLIC_DISCORD_OAUTH_REDIRECT_URI,
             code,
-            scope: ["identify", "email", "guilds.join"].join(" "),
+            scope: ["identify", "email", "guilds.join", "role_connections.write"].join(" "),
         }).toString();
 
         const { access_token = null, refresh_token, token_type = "Bearer", expires_in } = await fetch("https://discord.com/api/oauth2/token", {
@@ -64,6 +64,16 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     refreshToken: refresh_token,
                     tokenExpiry: new Date(Date.now() + expires_in * 1000)
                 }
+            });
+
+            await fetch(`https://discord.com/api/users/@me/applications/${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}/role-connection`, {
+                headers: {
+                    Authorization: `${token_type} ${access_token}`
+                },
+                body: new URLSearchParams({
+                    platform_name: "vatACARS",
+                    platform_username: oAuthAccount.user.username
+                })
             });
 
             (session as IronSession<SessionData>).user = {

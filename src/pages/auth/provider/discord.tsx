@@ -9,7 +9,7 @@ const OAUTH_QS = new URLSearchParams({
     client_id: process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID,
     redirect_uri: process.env.NEXT_PUBLIC_DISCORD_OAUTH_REDIRECT_URI,
     response_type: "code",
-    scope: ["identify", "email", "guilds.join"].join(" "),
+    scope: ["identify", "email", "guilds.join", "role_connections.write"].join(" "),
 }).toString();
 
 const OAUTH_URI = `https://discord.com/oauth2/authorize?${OAUTH_QS}`;
