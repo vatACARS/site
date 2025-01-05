@@ -9,14 +9,14 @@ import {
 } from '@xyflow/react';
 
 import CustomNode from "@comp/ui/customNode";
- 
+
 const nodeTypes = {
-  custom: CustomNode,
+    custom: CustomNode,
 };
 
 import '@xyflow/react/dist/style.css';
 
-const fetcher = (url) => fetch(url, {headers: { "Content-Type": "application/json" }}).then((res) => res.json());
+const fetcher = (url) => fetch(url, { headers: { "Content-Type": "application/json" } }).then((res) => res.json());
 
 const initialNodes = [
     {
@@ -86,6 +86,17 @@ const initialEdges = [
     }
 ];
 
+export async function getStaticProps() {
+    return {
+        props: {
+            seo: {
+                title: 'Statistics',
+                description: 'View detailed statistics for vatACARS and related services.'
+            },
+        },
+    };
+}
+
 export default () => {
     const { data: statisticsResponse } = useSWR('/api/statistics', fetcher, { refreshInterval: 10000 });
     const [statistics, setStatistics] = useState(null);
@@ -113,7 +124,7 @@ export default () => {
     }
 
     useEffect(() => {
-        if(statistics) {
+        if (statistics) {
             updateNodeById('connected', `${statistics.connected} Connected`);
             updateNodeById('stationGateway', `${statistics.stations.length} Registered`);
             updateNodeById('messageGateway', `${statistics.messages.length} Transactions`);
@@ -121,7 +132,7 @@ export default () => {
     }, [statistics]);
 
     useEffect(() => {
-        if(statisticsResponse) setStatistics(statisticsResponse);
+        if (statisticsResponse) setStatistics(statisticsResponse);
     }, [statisticsResponse]);
 
     return (

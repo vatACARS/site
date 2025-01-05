@@ -2,7 +2,18 @@ import { useState, useEffect } from 'react';
 import { CircleDot, ExternalLink, AlertCircle, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-const RoadmapPage = () => {
+export async function getStaticProps() {
+  return {
+    props: {
+      seo: {
+        title: 'Roadmap',
+        description: 'See the current state of vatACARS and what we have planned for in the future.'
+      },
+    },
+  };
+}
+
+export default () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -56,8 +67,8 @@ const RoadmapPage = () => {
   };
 
   const toggleRepo = (repo) => {
-    setExpandedRepos(prev => 
-      prev.includes(repo) 
+    setExpandedRepos(prev =>
+      prev.includes(repo)
         ? prev.filter(r => r !== repo)
         : [...prev, repo]
     );
@@ -127,9 +138,8 @@ const RoadmapPage = () => {
                     {repoItems.length} {repoItems.length === 1 ? 'item' : 'items'}
                   </span>
                 </h2>
-                <ChevronDown className={`w-6 h-6 text-zinc-400 transform transition-transform duration-300 ${
-                  expandedRepos.includes(repo) ? 'rotate-180' : ''
-                } group-hover:text-zinc-300`} />
+                <ChevronDown className={`w-6 h-6 text-zinc-400 transform transition-transform duration-300 ${expandedRepos.includes(repo) ? 'rotate-180' : ''
+                  } group-hover:text-zinc-300`} />
               </button>
 
               {expandedRepos.includes(repo) && (
@@ -182,6 +192,4 @@ const RoadmapPage = () => {
       )}
     </div>
   );
-};
-
-export default RoadmapPage;
+}
