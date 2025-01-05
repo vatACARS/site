@@ -72,7 +72,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     Authorization: `${token_type} ${access_token}`,
                     "Content-Type": "application/json"
                 },
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     platform_name: "vatACARS",
                     platform_username: oAuthAccount.user.username
                 })
@@ -111,7 +111,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
                     Authorization: `${token_type} ${access_token}`,
                     "Content-Type": "application/json"
                 },
-                body: new URLSearchParams({
+                body: JSON.stringify({
                     platform_name: "vatACARS",
                     platform_username: oAuthAccount.user.username
                 })
