@@ -36,6 +36,20 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
         }
     });
 
+    if(session.oauth.provider === "discord") {
+        await fetch(`https://discord.com/api/users/@me/applications/${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}/role-connection`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${session.oauth.accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                platform_name: "vatACARS",
+                platform_username: username
+            })
+        });
+    }
+
     await session.destroy();
 
     (session as unknown as IronSession<SessionData>).user = {
