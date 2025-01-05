@@ -209,7 +209,7 @@ export default () => {
                                     <span className="text-sm">Continue with Google</span>
                                 </button>
                                 */}
-                                <button onClick={async () => { setModalOpen(false); await router.push("/auth/provider/discord"); router.reload() }} className="px-12 h-10 w-full inline-flex items-center justify-center gap-4 rounded bg-slate-700 hover:bg-slate-600 border border-transparent hover:border-slate-500 transition-all duration-200">
+                                <button disabled={loading} onClick={async () => { setModalOpen(false); await router.push("/auth/provider/discord"); router.reload() }} className="px-12 h-10 w-full inline-flex items-center justify-center gap-4 rounded bg-slate-700 hover:bg-slate-600 border border-transparent hover:border-slate-500 transition-all duration-200">
                                     <FaDiscord className="text-xl" />
                                     <span className="text-sm">Continue with Discord</span>
                                 </button>
