@@ -67,6 +67,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
             });
 
             await fetch(`https://discord.com/api/users/@me/applications/${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}/role-connection`, {
+                method: "PUT",
                 headers: {
                     Authorization: `${token_type} ${access_token}`
                 },
