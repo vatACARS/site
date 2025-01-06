@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method !== "POST") return sendApiResponse(res, "error", "Method not allowed.", {}, 405);
     if(!session.oauth) return sendApiResponse(res, "error", "Missing onboarding information.", {}, 401);
     const { username, password, firstName, lastName, email } = JSON.parse(req.body);
-    if (!username || !password) return sendApiResponse(res, "error", "Missing required fields: username, password.", {}, 400);
+    if (!username || !password || !firstName || !lastName || !email) return sendApiResponse(res, "error", "Missing required fields.", {}, 400);
 
     const user = await prisma.acarsUser.findUnique({ where: { username } });
     if (user) return sendApiResponse(res, "error", "That username is taken.", {}, 401);
