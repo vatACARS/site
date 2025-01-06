@@ -98,7 +98,7 @@ export default () => {
                         </div>
                     </div>
                     <span className="text-sm text-zinc-500">
-                        By clicking Finish, you agree to our <a href="/terms" className="link link-animated text-blue-400">Terms of Service</a> and <a href="/privacy" className="link link-animated text-blue-400">Privacy Policy</a>.
+                        By clicking Finish, you agree to our <a href="/legal/terms" className="link link-animated text-blue-400">Terms of Service</a> and <a href="/legal/privacy" className="link link-animated text-blue-400">Privacy Policy</a>.
                     </span>
                     {errors ? (
                         <div className="text-red-500 text-sm">
