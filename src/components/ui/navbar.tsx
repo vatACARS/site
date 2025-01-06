@@ -172,7 +172,7 @@ export default () => {
                                     <label htmlFor="password" className="input-floating-label peer-focus:text-zinc-300">Password</label>
                                     <div className="w-full flex justify-end">
                                         <Link href="/auth/forgot">
-                                            <span className="block cursor-pointer text-sm text-blue-400 link link-animated">Forgot password?</span>
+                                            <span onClick={() => setModalOpen(false)} className="block cursor-pointer text-sm text-blue-400 link link-animated">Forgot password?</span>
                                         </Link>
                                     </div>
                                 </div>
@@ -184,7 +184,7 @@ export default () => {
                                 <div className="text-center text-sm text-slate-400">
                                     Don't have an account yet?
                                     <Link href="/auth/signup">
-                                        <span className="ml-2 font-medium text-blue-400 link link-animated">Sign up</span>
+                                        <span onClick={() => setModalOpen(false)} className="ml-2 font-medium text-blue-400 link link-animated">Sign up</span>
                                     </Link>
                                 </div>
                             </form>
