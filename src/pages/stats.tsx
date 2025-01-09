@@ -86,6 +86,22 @@ const initialEdges = [
     }
 ];
 
+function getRelativeTime(timestamp) {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffMs = now.getTime() - past.getTime();
+
+    const seconds = Math.floor(diffMs / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (days > 0) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    if (minutes > 0) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    return `${seconds} second${seconds > 1 ? 's' : ''} ago`;
+}
+
 export default () => {
     const { data: statisticsResponse } = useSWR('/api/statistics', fetcher, { refreshInterval: 10000 });
     const [statistics, setStatistics] = useState(null);
@@ -117,6 +133,24 @@ export default () => {
             updateNodeById('connected', `${statistics.connected} Connected`);
             updateNodeById('stationGateway', `${statistics.stations.length} Registered`);
             updateNodeById('messageGateway', `${statistics.messages.length} Transactions`);
+
+            const recentlyConnected = statistics.stations.slice(-10);
+            const stationNodes = recentlyConnected.map((station, index) => ({
+                id: `station-${station.id}`,
+                type: 'custom',
+                position: { x: 500, y: 50 + index * 50 },
+                data: {
+                    title: station.logonCode,
+                    value: getRelativeTime(station.createdAt),
+                    valueType: 'info',
+                    targetHandle: true,
+                }
+            }));
+
+            setNodes(prevNodes => [
+                ...prevNodes.filter(node => !node.id.startsWith('station-')),
+                ...stationNodes
+            ]);
         }
     }, [statistics]);
 
