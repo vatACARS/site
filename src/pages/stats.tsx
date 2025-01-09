@@ -86,17 +86,6 @@ const initialEdges = [
     }
 ];
 
-export async function getStaticProps() {
-    return {
-        props: {
-            seo: {
-                title: 'Statistics',
-                description: 'View detailed statistics for vatACARS and related services.'
-            },
-        },
-    };
-}
-
 export default () => {
     const { data: statisticsResponse } = useSWR('/api/statistics', fetcher, { refreshInterval: 10000 });
     const [statistics, setStatistics] = useState(null);

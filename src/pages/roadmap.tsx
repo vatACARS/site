@@ -2,17 +2,6 @@ import { useState, useEffect } from 'react';
 import { CircleDot, ExternalLink, AlertCircle, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
-export async function getStaticProps() {
-  return {
-    props: {
-      seo: {
-        title: 'Roadmap',
-        description: 'See the current state of vatACARS and what we have planned for in the future.'
-      },
-    },
-  };
-}
-
 export default () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
