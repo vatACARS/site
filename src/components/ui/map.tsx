@@ -30,7 +30,96 @@ const MapComponent = ({ className }) => {
     const [airports, setAirports] = useState(null);
 
     const layerRefs = useRef({
-        airportLayer: new VectorLayer({ source: new VectorSource() }),
+        atsuLayer: new VectorLayer({ source: new VectorSource() }),
+        airportsLayer: new VectorLayer({
+            source: new VectorSource(),
+            style: feature => {
+                const airport = feature.get("details");
+                const groundDep = airport?.network?.aircraft?.groundDep?.length || 0;
+                const groundArr = airport?.network?.aircraft?.groundArr?.length || 0;
+                const prefiles = airport?.network?.aircraft?.prefiles?.length || 0;
+
+                const styles = [
+                    new Style({
+                        image: new CircleStyle({
+                            radius: 2,
+                            fill: new Fill({
+                                color: 'rgba(255, 255, 255, 0.3)',
+                            }),
+                        }),
+                    }),
+                    new Style({
+                        text: new Text({
+                            text: airport.ident,
+                            offsetY: -10,
+                            font: 'bold 9px Arial',
+                            fill: new Fill({
+                                color: 'rgba(180, 180, 180, 1)',
+                            }),
+                            stroke: new Stroke({
+                                color: 'rgba(50, 50, 50, 0.5)',
+                                width: 4,
+                            }),
+                        }),
+                    }),
+                ];
+
+                if (groundDep > 0) {
+                    styles.push(new Style({
+                        text: new Text({
+                            text: `▲ ${groundDep}`,
+                            offsetX: 25,
+                            offsetY: -6,
+                            font: 'bold 10px Arial',
+                            fill: new Fill({
+                                color: 'rgba(80, 200, 80, 0.8)',
+                            }),
+                            stroke: new Stroke({
+                                color: 'rgba(0, 0, 0, 0.5)',
+                                width: 3,
+                            }),
+                        }),
+                    }));
+                }
+
+                if (groundArr > 0) {
+                    styles.push(new Style({
+                        text: new Text({
+                            text: `▼ ${groundArr}`,
+                            offsetX: 25,
+                            offsetY: 6,
+                            font: 'bold 10px Arial',
+                            fill: new Fill({
+                                color: 'rgba(200, 80, 80, 0.8)',
+                            }),
+                            stroke: new Stroke({
+                                color: 'rgba(0, 0, 0, 0.5)',
+                                width: 3,
+                            }),
+                        }),
+                    }));
+                }
+
+                if (prefiles > 0) {
+                    styles.push(new Style({
+                        text: new Text({
+                            text: `▸ ${prefiles}`,
+                            offsetX: 40,
+                            font: 'bold 10px Arial',
+                            fill: new Fill({
+                                color: 'rgba(150, 150, 150, 0.8)',
+                            }),
+                            stroke: new Stroke({
+                                color: 'rgba(0, 0, 0, 0.5)',
+                                width: 3,
+                            }),
+                        }),
+                    }));
+                }
+
+                return styles;
+            }
+        }),
         aircraftLayer: new VectorLayer({ source: new VectorSource() }),
         aircraftClusterLayer: new VectorLayer({
             source: new Cluster({
@@ -57,7 +146,7 @@ const MapComponent = ({ className }) => {
                     return [
                         new Style({
                             image: new CircleStyle({
-                                radius: 20 + Math.min(size * 2, 15),
+                                radius: 20 + Math.min(size * 2, 20),
                                 fill: new Fill({
                                     color: 'rgba(0, 128, 255, 0.2)',
                                 }),
@@ -132,7 +221,8 @@ const MapComponent = ({ className }) => {
                     }),
                 }),
                 boundariesLayer,
-                layerRefs.airportLayer,
+                layerRefs.atsuLayer,
+                layerRefs.airportsLayer,
                 layerRefs.aircraftClusterLayer,
             ],
             view: new View({
@@ -172,8 +262,8 @@ const MapComponent = ({ className }) => {
     useEffect(() => {
         if (!map || !statisticsResponse?.stations || !airports || !networkData?.pilots) return;
 
-        layerRefs.airportLayer.getSource().clear();
-        const airportFeatures = airports
+        layerRefs.atsuLayer.getSource().clear();
+        const atsuFeatures = airports
             .filter((airport) => statisticsResponse.stations.some((station) =>
                 station.logonCode.includes(airport.ident)
             ))
@@ -192,9 +282,9 @@ const MapComponent = ({ className }) => {
                 return marker;
             });
 
-        layerRefs.airportLayer.getSource().addFeatures(airportFeatures);
+        layerRefs.atsuLayer.getSource().addFeatures(atsuFeatures);
 
-        const vectorSource = new VectorSource();
+        const aircraftClusterSource = new VectorSource();
         const aircraftFeatures = networkData.pilots
             .filter((pilot) => !Object.values(networkData.airports || {}).some((airport: any) =>
                 airport.aircraft.groundArr?.includes(pilot.cid) ||
@@ -209,9 +299,38 @@ const MapComponent = ({ className }) => {
                 return feature;
             });
 
-        vectorSource.addFeatures(aircraftFeatures);
-        layerRefs.aircraftClusterLayer.getSource().setSource(vectorSource);
+        aircraftClusterSource.addFeatures(aircraftFeatures);
+        layerRefs.aircraftClusterLayer.getSource().setSource(aircraftClusterSource);
 
+        const airportsLayerSource = layerRefs.airportsLayer.getSource();
+        airportsLayerSource.clear();
+        console.log(networkData.airports);
+        const airportFeatures = airports
+            .filter((airport) => networkData.airports.some((station) =>
+                station.icao === airport.ident && (station.aircraft
+                    && station.aircraft.arrivals?.length > 0
+                    || station.aircraft.departures?.length > 0
+                    || station.aircraft.groundArr?.length > 0
+                    || station.aircraft.groundDep?.length > 0
+                )
+            ))
+            .map((airport) => {
+                const networkAirport = networkData.airports.find(station =>
+                    station.icao.includes(airport.ident)
+                );
+
+                const marker = new Feature({
+                    geometry: new Point(fromLonLat([airport.longitude_deg, airport.latitude_deg])),
+                    name: airport.ident,
+                    details: {
+                        ...airport,
+                        network: networkAirport
+                    }
+                });
+                return marker;
+            });
+
+        airportsLayerSource.addFeatures(airportFeatures);
     }, [map, statisticsResponse, airports, networkData]);
 
 
