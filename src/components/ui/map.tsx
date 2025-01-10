@@ -146,7 +146,7 @@ const MapComponent = ({ className }) => {
                     return [
                         new Style({
                             image: new CircleStyle({
-                                radius: 20 + Math.min(size * 2, 20),
+                                radius: 20 + Math.min(size * 2, 15),
                                 fill: new Fill({
                                     color: 'rgba(0, 128, 255, 0.2)',
                                 }),
@@ -253,7 +253,8 @@ const MapComponent = ({ className }) => {
 
         mapInstance.on('moveend', () => {
             const zoomLevel = mapInstance.getView().getZoom();
-            layerRefs.aircraftClusterLayer.getSource().setDistance(zoomLevel < 5 ? 60 : 0);
+            console.log(zoomLevel);
+            layerRefs.aircraftClusterLayer.getSource().setDistance(zoomLevel < 1 ? 40 : 0);
         });
 
         setMap(mapInstance);
@@ -333,6 +334,20 @@ const MapComponent = ({ className }) => {
         airportsLayerSource.addFeatures(airportFeatures);
     }, [map, statisticsResponse, airports, networkData]);
 
+    useEffect(() => {
+        if (!map) return;
+    
+        const onMoveEnd = () => {
+            const zoomLevel = map.getView().getZoom();
+            layerRefs.aircraftClusterLayer.getSource().setDistance(zoomLevel < 3.5 ? 60 : 0);
+        };
+    
+        map.on('moveend', onMoveEnd);
+    
+        return () => {
+            map.un('moveend', onMoveEnd);
+        };
+    }, [map]);
 
     return (
         <div
