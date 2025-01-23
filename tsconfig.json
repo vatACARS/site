@@ -18,15 +18,33 @@
         "resolveJsonModule": true,
         "isolatedModules": true,
         "jsx": "preserve",
+        "plugins": [
+            {
+                "name": "next"
+            }
+        ],
+        "baseUrl": ".",
         "paths": {
-            "@comp/*": ["./src/components/*"],
-            "@lib/*": ["./src/lib/*"],
+            "@comp/*": [
+                "./src/components/*"
+            ],
+            "@lib/*": [
+                "./src/lib/*"
+            ],
+            "@public/*": [
+                "./public/*"
+            ],
+            "contentlayer/generated": [
+                "./.contentlayer/generated"
+            ],
         }
     },
     "include": [
         "next-env.d.ts",
         "**/*.ts",
-        "**/*.tsx"
+        "**/*.tsx",
+        ".next/types/**/*.ts",
+        ".contentlayer/generated"
     ],
     "exclude": [
         "node_modules"

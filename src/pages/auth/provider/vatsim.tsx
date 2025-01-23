@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 const qs = require("querystring");
 
 import { VscLoading } from "react-icons/vsc"
-import Link from "next/link";
 
 const OAUTH_QS = new URLSearchParams({
     client_id: process.env.NEXT_PUBLIC_VATSIM_CLIENT_ID,
@@ -29,6 +28,7 @@ export default () => {
             }, "/login", { shallow: true });
         }
         if(router && !router.query?.code) {
+            setStatus("Redirecting you to VATSIM...");
             setTimeout(() => router.push(OAUTH_URI), 3000);
             return;
         }
@@ -49,15 +49,15 @@ export default () => {
             setSuccess(true);
             setStatus(resp.message);
 
-            if(resp.data.action === "accountRequired") return setTimeout(() => router.push("/auth/onboarding"), 3000);
-            return setTimeout(() => router.push("/account"), 3000);
+            if(resp.data?.action! === "accountRequired") return setTimeout(() => router.push("/auth/onboarding"), 3000);
+            return setTimeout(() => router.push("/me"), 3000);
         }
 
         connect();
     }, [ router.isReady ]);
 
     return (
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full gap-y-4 flex flex-col items-center justify-center">
+        <div className="my-12 gap-y-4 flex flex-col items-center justify-center">
             <img src="/img/VATSIM_Logo_No_Tagline_2000px.png"
                 alt="VATSIM Logo"
                 className="hover:opacity-80 transition-opacity w-52"

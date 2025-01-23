@@ -49,15 +49,18 @@ export default () => {
                     {/* Bottom Bar */}
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 border-t border-zinc-800/50">
                         <div className="flex-col">
-                            <p className="text-sm text-zinc-500">&copy; 2024 vatACARS Team. All rights reserved.</p>
+                            <p className="text-sm text-zinc-500">&copy; {new Date().getFullYear()} vatACARS Team</p>
                             <span className="font-medium text-xs text-zinc-600">Real world aviation use is prohibited.</span>
                         </div>
                         <div className="flex gap-6 text-sm">
-                            <Link href="/terms">
-                                <span className="font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200">Terms</span>
+                            <Link href="/legal/attribution">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Open Source Attributions</span>
                             </Link>
-                            <Link href="/privacy">
-                                <span className="font-medium text-zinc-400 hover:text-zinc-200 transition-colors duration-200">Privacy</span>
+                            <Link href="/legal/terms">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Terms</span>
+                            </Link>
+                            <Link href="/legal/privacy">
+                                <span className="font-medium text-zinc-400 hover:text-zinc-200 link link-animated transition-colors duration-200">Privacy</span>
                             </Link>
                         </div>
                     </div>

@@ -1,0 +1,436 @@
+---
+title: Gateway Communication Flow
+---
+
+Here is a basic gateway flow that gets you connected to the gateway and authenticated:
+
+<div className="py-4 flex justify-center">
+    <img src="/img/docs/flow-diagram.png" alt="Gateway Communication Flow Diagram" className="w-1/2" />
+</div>
+
+1. **Client** initially connects to the gateway socket.
+2. **Client** sends an authenticate message to the gateway.
+3. **Gateway** authenticates the client and sends an authenticated message back.
+
+<Callout type="warning">
+    The gateway will disconnect the client if the client does not authenticate within 5 seconds.
+</Callout>
+
+## OPCodes
+
+The gateways use the following OPCodes to identify the type of message being sent and to where:
+
+<div className="pt-4">
+    <div className="py-2 px-8 rounded-lg border border-zinc-400">
+        <table className="w-full">
+            <thead className="font-medium text-zinc-200">
+                <tr>
+                    <th className="w-1/6 text-center">Code</th>
+                    <th className="text-left">Gateway</th>
+                    <th className="w-1/6 text-center">Action Code</th>
+                    <th className="text-left">Action Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {/* Authentication Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="4">1</td>
+                    <td rowSpan="4"><SelectFile fileTitle="Authentication Gateway" filePath={["For Developers", "Authentication Gateway"]}>Authentication</SelectFile></td>
+                    <td className="text-center">1</td>
+                    <td>Authenticate</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">2</td>
+                    <td>Reconnect</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">3</td>
+                    <td>Disconnect</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">4</td>
+                    <td>Heartbeat</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* Identity Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="3">2</td>
+                    <td rowSpan="3"><SelectFile fileTitle="Identity Gateway" filePath={["For Developers", "Identity Gateway"]}>Identity</SelectFile></td>
+                    <td className="text-center">10</td>
+                    <td>RegisterClient</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">11</td>
+                    <td>UpdateClientStatus</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">12</td>
+                    <td>Logout</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* InternalMessaging Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="3">3</td>
+                    <td rowSpan="3"><SelectFile fileTitle="InternalMessaging Gateway" filePath={["For Developers", "InternalMessaging Gateway"]}>InternalMessaging</SelectFile></td>
+                    <td className="text-center">20</td>
+                    <td>SendMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">21</td>
+                    <td>ReceiveMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">22</td>
+                    <td>MessageAcknowledgement</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* Station Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="3">4</td>
+                    <td rowSpan="3"><SelectFile fileTitle="Station Gateway" filePath={["For Developers", "Station Gateway"]}>Station</SelectFile></td>
+                    <td className="text-center">30</td>
+                    <td>AddStation</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">31</td>
+                    <td>RemoveStation</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">32</td>
+                    <td>UpdateStationStatus</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* CPDLC Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="4">5</td>
+                    <td rowSpan="4"><SelectFile fileTitle="CPDLC Gateway" filePath={["For Developers", "CPDLC Gateway"]}>CPDLC</SelectFile></td>
+                    <td className="text-center">40</td>
+                    <td>SendCPDLCMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">41</td>
+                    <td>ReceiveCPDLCMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">42</td>
+                    <td>CPDLCAcknowledgement</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">43</td>
+                    <td>CPDLCError</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* Telex Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="4">6</td>
+                    <td rowSpan="4"><SelectFile fileTitle="Telex Gateway" filePath={["For Developers", "Telex Gateway"]}>Telex</SelectFile></td>
+                    <td className="text-center">50</td>
+                    <td>SendTelexMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">51</td>
+                    <td>ReceiveTelexMessage</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">52</td>
+                    <td>TelexAcknowledgement</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">53</td>
+                    <td>TelexError</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* Administrative Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="3">7</td>
+                    <td rowSpan="3"><SelectFile fileTitle="Administrative Gateway" filePath={["For Developers", "Administrative Gateway"]}>Administrative</SelectFile></td>
+                    <td className="text-center">60</td>
+                    <td>Broadcast</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">61</td>
+                    <td>KickUser</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">62</td>
+                    <td>ServerAnnouncement</td>
+                </tr>
+
+                <tr><td colSpan="4" className="h-4"></td></tr>
+
+                {/* Miscellaneous Gateway */}
+                <tr className="align-top">
+                    <td className="text-center" rowSpan="3">8</td>
+                    <td rowSpan="3"><SelectFile fileTitle="Miscellaneous Gateway" filePath={["For Developers", "Miscellaneous Gateway"]}>Miscellaneous</SelectFile></td>
+                    <td className="text-center">90</td>
+                    <td>Error</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">91</td>
+                    <td>InvalidAction</td>
+                </tr>
+                <tr className="align-top">
+                    <td className="text-center">92</td>
+                    <td>PermissionDenied</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+## Implementation
+
+Here's a full implementation of the gateway communication flow, including the initial connection, authentication, and message handling:
+
+<Tabs>
+  <Tab
+    id="tab-implementation-csharp"
+    tabContentId="implementation-csharp"
+    isActive
+  >
+    C#
+  </Tab>
+  <Tab
+    id="tab-implementation-nodejs"
+    tabContentId="implementation-nodejs"
+  >
+    NodeJS
+  </Tab>
+</Tabs>
+
+<div className="mt-3">
+  <TabPanel
+    id="implementation-csharp"
+    isActive
+    labelledById="tab-implementation-csharp"
+  >
+    ```cs showLineNumbers title="vatACARSConnection.cs" {3}
+    namespace YourService.VatACARSAuthority
+    {
+        public class VatACARSAuthority
+        {
+            private readonly Uri _apiUri;
+            private readonly string _token;
+            private ClientWebSocket _clientWebSocket;
+            public CancellationTokenSource _cancellationTokenSource;
+
+            private readonly ConcurrentDictionary<string, TaskCompletionSource<ApiResponse>> _pendingResponses;
+
+            public event Action<string> OnUnmatchedMessage;
+            public event Action OnConnectionClosed;
+
+            public VatACARSAuthority(Uri apiUri, string token)
+            {
+                _apiUri = apiUri;
+                _token = token;
+                _clientWebSocket = new ClientWebSocket();
+                _cancellationTokenSource = new CancellationTokenSource();
+            }
+
+            public async Task<bool> ConnectAsync()
+            {
+                try {
+                    await _clientWebSocket.ConnectAsync(_apiUri, _cancellationTokenSource.Token);
+                    _ = ListenForMessagesAsync(_mainProcessCancellationTokenSource.Token);
+                    bool authenticated = await AuthenticateAsync(_token);
+                    return authenticated;
+                } catch (Exception e) {
+                    Console.WriteLine(e.Message);
+                    return false;
+                }
+            }
+
+            public async Task<bool> AuthenticateAsync(string token)
+            {
+                ApiResponse logonResponse = await SendRequestAsync(Gateway.Authentication, GatewayAction.Authenticate, new Dictionary<string, object>{ { "token", token } });
+                return logonResponse.Status == "success";
+            }
+
+            private async Task ListenForMessagesAsync(CancellationToken cancellationToken)
+            {
+                var buffer = new byte[4096];
+
+                try
+                {
+                    while(_clientWebSocket.State == WebSocketState.Open && !cancellationToken.IsCancellationRequested)
+                    {
+                        var result = await _clientWebSocket.ReceiveAsync(
+                            new ArraySegment<byte>(buffer),
+                            cancellationToken
+                        );
+
+                        if(result.MessageType == WebSocketMessageType.Close)
+                        {
+                            OnConnectionClosed?.Invoke();
+                            break;
+                        }
+
+                        string receivedMessage = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                        ProcessReceivedMessage(receivedMessage);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Console.WriteLine("Listening task canceled.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while receiving message: {ex.Message}");
+                    OnConnectionClosed?.Invoke();
+                }
+            }
+
+            private void ProcessReceivedMessage(string receivedMessage)
+            {
+                try {
+                    if(_cancellationTokenSource.Token.IsCancellationRequested) return;
+                    var response = JsonConvert.DeserializeObject<ApiResponse>(receivedMessage);
+                    if(response != null && response.RequestId != "") { }
+                    {
+                        string requestId = response.RequestId;
+                        if (_pendingResponses.TryRemove(requestId, out var tcs))
+                        {
+                            if (response.Status != "success")
+                            {
+                                tcs.SetException(new Exception(response.Message));
+                            }
+                            tcs.SetResult(response);
+                            return;
+                        }
+                        OnUnmatchedMessage?.Invoke(receivedMessage);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to process message: {ex.Message}");
+                    OnUnmatchedMessage?.Invoke(receivedMessage);
+                }
+            }
+        }
+
+        public class ApiResponse
+        {
+            public string Status { get; set; }
+            public string RequestId { get; set; }
+            public Dictionary<string, object> Data { get; set; }
+            public string Message { get; set; }
+
+            public ApiResponse()
+            {
+                Data = new Dictionary<string, object>();
+            }
+        }
+    }
+    ```
+  </TabPanel>
+  <TabPanel
+    id="implementation-nodejs"
+    labelledById="tab-implementation-nodejs"
+  >
+    ```js showLineNumbers title="vatACARSClient.js" {3}
+        const WebSocket = require('ws');
+        const { v4: uuidv4 } = require('uuid');
+
+        export default class VatACARSAuthority {
+            constructor(apiUri, token) {
+                this.apiUri = apiUri;
+                this.token = token;
+                this.clientWebSocket = new WebSocket(apiUri);
+                this.pendingResponses = new Map();
+            }
+
+            async connect() {
+                try {
+                    await this.clientWebSocket.connect();
+                    this.clientWebSocket.on('message', this.processReceivedMessage);
+                    const authenticated = await this.authenticate(this.token);
+                    return authenticated;
+                } catch (e) {
+                    console.log(e.message);
+                    return false;
+                }
+            }
+
+            async authenticate(token) {
+                const logonResponse = await this.sendRequest(Gateway.Authentication, GatewayAction.Authenticate, { token });
+                return logonResponse.status === 'success';
+            }
+
+            processReceivedMessage(receivedMessage) {
+                try {
+                    const response = JSON.parse(receivedMessage);
+                    if (response.requestId) {
+                        const requestId = response.requestId;
+                        const tcs = this.pendingResponses.get(requestId);
+                        if (tcs) {
+                            if (response.status !== 'success') {
+                                tcs.reject(new Error(response.message));
+                            }
+                            tcs.resolve(response);
+                            return;
+                        }
+                    }
+                    this.emit('unmatchedMessage', receivedMessage);
+                } catch (e) {
+                    console.log(`Failed to process message: ${e.message}`);
+                    this.emit('unmatchedMessage', receivedMessage);
+                }
+            }
+
+            sendRequest(gateway, action, data) {
+                const requestId = uuidv4();
+                const request = {
+                    event: gateway,
+                    data : {
+                        ...data,
+                        action
+                    },
+                    requestId
+                };
+
+                const tcs = new Promise((resolve, reject) => {
+                    this.pendingResponses.set(requestId, { resolve, reject });
+                });
+                this.clientWebSocket.send(JSON.stringify(request));
+
+                return tcs;
+            }
+        }
+    ```
+
+    ```js showLineNumbers title="index.js" {3}
+        const VatACARSAuthority = require('./vatACARSClient');
+
+        (async () => {
+            const vatACARS = new VatACARSAuthority('ws://api.vatacars.com/gateway', 'your-token');
+            vatACARS.on('unmatchedMessage', (message) => {
+                console.log('Received unmatched message:', message);
+            });
+
+            vatACARS.on('connectionClosed', () => {
+                console.log('Connection closed');
+            });
+
+            const connected = await vatACARS.connect();
+            if (connected) {
+                console.log('Successfully connected');
+            } else {
+                console.log('Failed to connect');
+            }
+        })();
+    ```
+  </TabPanel>
+</div>
