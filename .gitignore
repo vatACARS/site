@@ -1,6 +1,11 @@
 # contentlayer generated content
 .contentlayer
 
+# Tempo
+**/tempobook/dynamic/
+**/tempobook/storyboards/
+
+
 # Logs
 logs
 *.log
