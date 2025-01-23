@@ -20,14 +20,8 @@ const nextConfig = {
     },
     ...(process.env.NEXT_PUBLIC_TEMPO ? {
         experimental: {
-            // Dynamically select Tempo DevTools SWC plugin based on NextJS version
             swcPlugins: [
-                [require.resolve(
-                    // Use version-specific plugin path
-                    process.env.NEXT_PUBLIC_TEMPO === '14.1.3'
-                        ? "tempo-devtools/swc/0.90"
-                        : "tempo-devtools/swc/0.86"
-                ), {}]
+                [require.resolve("tempo-devtools/swc/0.90"), {}]
             ]
         }
     } : {})
